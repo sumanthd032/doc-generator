@@ -99,7 +99,7 @@ def generate_document():
         'consent_cryopreservation': 'Yes' if request.form.get('consent_cryopreservation') else 'No',
         'consent_art_bank': 'Yes' if request.form.get('consent_art_bank') else 'No',
         'consent_registry': 'Yes' if request.form.get('consent_registry') else 'No',
-        'date': datetime.now().strftime('%d/%m/%2025')
+        'date': datetime.now().strftime('%d/%m/%y')
     }
 
     # Validate required fields
