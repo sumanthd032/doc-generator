@@ -49,3 +49,40 @@
 2025-07-17 17:54:58,392 INFO: 127.0.0.1 - - [17/Jul/2025 17:54:58] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
 2025-07-17 17:55:00,183 INFO: Downloaded donor_documents_shae_20250717_175457.zip by 127.0.0.1
 2025-07-17 17:55:00,185 INFO: 127.0.0.1 - - [17/Jul/2025 17:55:00] "GET /download/donor_documents_shae_20250717_175457.zip HTTP/1.1" 200 -
+2025-07-17 19:15:37,979 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-17 19:15:37,986 INFO: [33mPress CTRL+C to quit[0m
+2025-07-17 19:15:56,601 INFO: 127.0.0.1 - - [17/Jul/2025 19:15:56] "GET / HTTP/1.1" 200 -
+2025-07-17 19:15:57,407 INFO: 127.0.0.1 - - [17/Jul/2025 19:15:57] "GET /static/styles.css HTTP/1.1" 200 -
+2025-07-17 19:16:05,111 INFO: 127.0.0.1 - - [17/Jul/2025 19:16:05] "GET /sperm HTTP/1.1" 200 -
+2025-07-17 19:16:05,171 INFO: 127.0.0.1 - - [17/Jul/2025 19:16:05] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:16:05,190 INFO: 127.0.0.1 - - [17/Jul/2025 19:16:05] "GET /static/scripts.js HTTP/1.1" 200 -
+2025-07-17 19:17:04,366 INFO: 127.0.0.1 - - [17/Jul/2025 19:17:04] "GET / HTTP/1.1" 200 -
+2025-07-17 19:17:04,429 INFO: 127.0.0.1 - - [17/Jul/2025 19:17:04] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:17:05,694 INFO: 127.0.0.1 - - [17/Jul/2025 19:17:05] "GET /oocyte HTTP/1.1" 200 -
+2025-07-17 19:17:05,759 INFO: 127.0.0.1 - - [17/Jul/2025 19:17:05] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:17:05,796 INFO: 127.0.0.1 - - [17/Jul/2025 19:17:05] "GET /static/oocyte_scripts.js HTTP/1.1" 200 -
+2025-07-17 19:17:35,284 INFO: Processing oocyte donor form submission from 127.0.0.1
+2025-07-17 19:17:35,769 INFO: Generated oocyte_donor_info_shae_20250717_191735.docx
+2025-07-17 19:17:35,769 INFO: ZIP file created: oocyte_donor_documents_shae_20250717_191735.zip
+2025-07-17 19:17:35,775 INFO: 127.0.0.1 - - [17/Jul/2025 19:17:35] "POST /generate_oocyte HTTP/1.1" 200 -
+2025-07-17 19:17:35,843 INFO: 127.0.0.1 - - [17/Jul/2025 19:17:35] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:17:37,934 INFO: Downloaded oocyte_donor_documents_shae_20250717_191735.zip by 127.0.0.1
+2025-07-17 19:17:37,935 INFO: 127.0.0.1 - - [17/Jul/2025 19:17:37] "GET /download/oocyte_donor_documents_shae_20250717_191735.zip HTTP/1.1" 200 -
+2025-07-17 19:18:34,146 INFO: 127.0.0.1 - - [17/Jul/2025 19:18:34] "GET / HTTP/1.1" 200 -
+2025-07-17 19:18:34,288 INFO: 127.0.0.1 - - [17/Jul/2025 19:18:34] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:18:41,521 INFO: 127.0.0.1 - - [17/Jul/2025 19:18:41] "GET /sperm HTTP/1.1" 200 -
+2025-07-17 19:18:41,678 INFO: 127.0.0.1 - - [17/Jul/2025 19:18:41] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:18:41,695 INFO: 127.0.0.1 - - [17/Jul/2025 19:18:41] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+2025-07-17 19:20:58,504 INFO: Processing sperm donor form submission from 127.0.0.1
+2025-07-17 19:20:58,847 INFO: Generated form_15_shae_20250717_192058.docx
+2025-07-17 19:20:59,042 INFO: Generated medical_history_shae_20250717_192058.docx
+2025-07-17 19:20:59,350 INFO: Generated donor_info_shae_20250717_192058.docx
+2025-07-17 19:20:59,351 INFO: ZIP file created: sperm_donor_documents_shae_20250717_192058.zip
+2025-07-17 19:20:59,351 INFO: 127.0.0.1 - - [17/Jul/2025 19:20:59] "POST /generate_sperm HTTP/1.1" 200 -
+2025-07-17 19:20:59,467 INFO: 127.0.0.1 - - [17/Jul/2025 19:20:59] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:21:07,497 INFO: Downloaded sperm_donor_documents_shae_20250717_192058.zip by 127.0.0.1
+2025-07-17 19:21:07,499 INFO: 127.0.0.1 - - [17/Jul/2025 19:21:07] "GET /download/sperm_donor_documents_shae_20250717_192058.zip HTTP/1.1" 200 -
+2025-07-17 19:24:21,196 INFO: 127.0.0.1 - - [17/Jul/2025 19:24:21] "GET /oocyte HTTP/1.1" 200 -
+2025-07-17 19:24:21,661 INFO: 127.0.0.1 - - [17/Jul/2025 19:24:21] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:24:21,816 INFO: 127.0.0.1 - - [17/Jul/2025 19:24:21] "[36mGET /static/oocyte_scripts.js HTTP/1.1[0m" 304 -

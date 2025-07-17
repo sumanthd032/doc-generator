@@ -63,6 +63,19 @@ def create_medical_history_template():
     p.add_run('{email_address}')
     p = doc.add_paragraph()
     p.add_run('   · Aadhaar Number: ').bold = True
+    doc.add_paragraph('2. Date of Birth: {date_of_birth} (As per Aadhaar, Enclosed)')
+    doc.add_paragraph('3. Contact Information:')
+    p = doc.add_paragraph()
+    p.add_run('   · Address: ').bold = True
+    p.add_run('{address} (As per Aadhaar, Enclosed)')
+    p = doc.add_paragraph()
+    p.add_run('   · Phone Number: ').bold = True
+    p.add_run('{contact_number}')
+    p = doc.add_paragraph()
+    p.add_run('   · Email: ').bold = True
+    p.add_run('{email_address}')
+    p = doc.add_paragraph()
+    p.add_run('   · Aadhaar Number: ').bold = True
     p.add_run('{aadhaar_number}')
 
     doc.add_heading('Section B: Medical and Genetic Screening', level=2).bold = True
@@ -150,12 +163,41 @@ def create_donor_info_template():
     doc.add_paragraph('Signature: ___________________________ Date: {date}')
     doc.save('templates_docx/donor_info.docx')
 
+def create_oocyte_donor_info_template():
+    doc = Document()
+    heading = doc.add_heading('OOCYTE DONOR INFORMATION FORM', level=1)
+    heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    heading.runs[0].bold = True
+    doc.add_paragraph()
+
+    doc.add_heading('Personal Details:', level=2).bold = True
+    doc.add_paragraph('1. Full Name: {full_name}')
+    doc.add_paragraph('2. Aadhaar Number: {aadhaar_number}')
+    doc.add_paragraph('3. Date of Birth: {date_of_birth} (As per Aadhaar, Attached)')
+
+    doc.add_heading('Consultation Details:', level=2).bold = True
+    doc.add_paragraph('1. Date of Discussion: {date_of_discussion}')
+    doc.add_paragraph('2. Date of Consultancy: {date_of_consultancy}')
+
+    doc.add_heading('Reproductive History:', level=2).bold = True
+    doc.add_paragraph('1. Number of Biological Children (if any): {num_children}')
+    doc.add_paragraph('{children_ages}')  # Placeholder for dynamic children ages
+
+    doc.add_heading('Consent and Legal Acknowledgment:', level=2).bold = True
+    doc.add_paragraph('1. I understand that my genetic material will be used for assisted reproductive purposes.')
+    doc.add_paragraph('2. I consent to the storage and use of my oocytes for fertility treatments.')
+    doc.add_paragraph('3. I acknowledge that I am voluntarily providing this information, this shall be used for the legal purpose.')
+    doc.add_paragraph('4. Furthermore, I declare I have never donated my oocytes to any ART clinic or bank, nor through any other means, and I will not donate my oocytes in the future.')
+    doc.add_paragraph('Signature: ___________________________ Date: {date}')
+    doc.save('templates_docx/oocyte_donor_info.docx')
+
 def create_all_templates():
     if not os.path.exists('templates_docx'):
         os.makedirs('templates_docx')
     create_form_15_template()
     create_medical_history_template()
     create_donor_info_template()
+    create_oocyte_donor_info_template()
 
 if __name__ == '__main__':
     create_all_templates()

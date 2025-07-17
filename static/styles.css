@@ -36,6 +36,17 @@ h3, .accordion-button {
     background-color: #6c757d;
     border-color: #6c757d;
 }
+.btn-home {
+    background-color: #28a745;
+    border-color: #28a745;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    margin: 10px;
+}
+.btn-home:hover {
+    background-color: #218838;
+    border-color: #218838;
+}
 .alert {
     margin-bottom: 20px;
     border-radius: 8px;
@@ -67,14 +78,20 @@ select {
 .accordion-body {
     background-color: #f8f9fa;
 }
+.home-container {
+    max-width: 600px;
+    text-align: center;
+    margin-top: 50px;
+}
 @media (max-width: 576px) {
-    .container {
+    .container, .home-container {
         padding: 15px;
     }
     h1 {
         font-size: 1.8rem;
     }
-    .btn-primary {
+    .btn-primary, .btn-home {
         width: 100%;
+        margin: 5px 0;
     }
 }

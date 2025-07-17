@@ -36,6 +36,11 @@ if not os.path.exists('downloads'):
 @app.route('/')
 @limiter.limit("10 per minute")
 def home():
+    return render_template('home.html')
+
+@app.route('/sperm')
+@limiter.limit("10 per minute")
+def sperm_index():
     form_data = {
         'full_name': '', 'address': '', 'pin_code': '', 'contact_number': '', 'aadhaar_number': '',
         'date_of_birth': '', 'email_address': '', 'donor_id': '', 'date_of_consultancy': '',
@@ -48,12 +53,21 @@ def home():
         'mother_tongue': '', 'skin_colour': '', 'hair_colour': '', 'eye_colour': '', 'religion': '',
         'occupation': '', 'consent_cryopreservation': 'No', 'consent_art_bank': 'No', 'consent_registry': 'No'
     }
-    return render_template('index.html', form_data=form_data, errors=[], today=datetime.now().date().isoformat())
+    return render_template('sperm_index.html', form_data=form_data, errors=[], today=datetime.now().date().isoformat())
 
-@app.route('/generate', methods=['POST'])
+@app.route('/oocyte')
+@limiter.limit("10 per minute")
+def oocyte_index():
+    form_data = {
+        'full_name': '', 'aadhaar_number': '', 'date_of_birth': '', 'date_of_discussion': '',
+        'date_of_consultancy': '', 'num_children': '0'
+    }
+    return render_template('oocyte_index.html', form_data=form_data, errors=[], today=datetime.now().date().isoformat())
+
+@app.route('/generate_sperm', methods=['POST'])
 @limiter.limit("5 per minute")
-def generate_document():
-    logging.info(f"Processing form submission from {request.remote_addr}")
+def generate_sperm_document():
+    logging.info(f"Processing sperm donor form submission from {request.remote_addr}")
     form_data = {
         'full_name': request.form.get('full_name', '').strip(),
         'address': request.form.get('address', '').strip(),
@@ -184,7 +198,7 @@ def generate_document():
 
     if errors:
         logging.warning(f"Validation errors: {errors}")
-        return render_template('index.html', errors=errors, form_data=form_data, today=datetime.now().date().isoformat())
+        return render_template('sperm_index.html', errors=errors, form_data=form_data, today=datetime.now().date().isoformat())
 
     form_data['children_ages'] = '\n'.join(children_ages) if children_ages else 'None'
 
@@ -210,7 +224,7 @@ def generate_document():
     # Generate documents and prepare ZIP
     generated_files = []
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    zip_filename = f"donor_documents_{form_data['full_name'].replace(' ', '_') or 'Unknown'}_{timestamp}.zip"
+    zip_filename = f"sperm_donor_documents_{form_data['full_name'].replace(' ', '_') or 'Unknown'}_{timestamp}.zip"
     zip_path = os.path.join('downloads', zip_filename)
 
     try:
@@ -240,7 +254,118 @@ def generate_document():
         return render_template('error.html', error=f"Error creating ZIP file: {str(e)}")
 
     logging.info(f"ZIP file created: {zip_filename}")
-    return render_template('success.html', zip_filename=zip_filename, errors=[])
+    return render_template('success.html', zip_filename=zip_filename, errors=[], donor_type='sperm')
+
+@app.route('/generate_oocyte', methods=['POST'])
+@limiter.limit("5 per minute")
+def generate_oocyte_document():
+    logging.info(f"Processing oocyte donor form submission from {request.remote_addr}")
+    form_data = {
+        'full_name': request.form.get('full_name', '').strip(),
+        'aadhaar_number': request.form.get('aadhaar_number', '').strip(),
+        'date_of_birth': request.form.get('date_of_birth', '').strip(),
+        'date_of_discussion': request.form.get('date_of_discussion', '').strip(),
+        'date_of_consultancy': request.form.get('date_of_consultancy', '').strip(),
+        'num_children': request.form.get('num_children', '0').strip(),
+        'date': datetime.now().strftime('%d/%m/%y')
+    }
+
+    # Validate required fields
+    required_fields = ['full_name', 'aadhaar_number', 'date_of_discussion', 'date_of_consultancy']
+    errors = []
+    for field in required_fields:
+        if not form_data[field]:
+            errors.append(f"{field.replace('_', ' ').title()} is required.")
+
+    # Validate Aadhaar number (12 digits)
+    if form_data['aadhaar_number'] and not re.match(r'^\d{12}$', form_data['aadhaar_number']):
+        errors.append("Aadhaar Number must be 12 digits.")
+
+    # Validate dates (not in future, optional)
+    today = datetime.now().date()
+    for date_field in ['date_of_birth', 'date_of_discussion', 'date_of_consultancy']:
+        if form_data[date_field]:
+            try:
+                input_date = datetime.strptime(form_data[date_field], '%Y-%m-%d').date()
+                if input_date > today:
+                    errors.append(f"{date_field.replace('_', ' ').title()} cannot be in the future.")
+            except ValueError:
+                errors.append(f"Invalid format for {date_field.replace('_', ' ').title()}.")
+
+    # Validate number of children
+    try:
+        num_children = int(form_data['num_children']) if form_data['num_children'] else 0
+        if num_children < 0:
+            errors.append("Number of children cannot be negative.")
+        elif num_children > 20:
+            errors.append("Number of children cannot exceed 20.")
+    except ValueError:
+        errors.append("Number of children must be a valid number.")
+
+    # Handle dynamic children ages
+    children_ages = []
+    for i in range(1, num_children + 1):
+        age = request.form.get(f'child_{i}_age', '').strip()
+        try:
+            if age:
+                age_val = int(age)
+                if age_val < 0 or age_val > 100:
+                    errors.append(f"Child {i} Age must be between 0 and 100.")
+                children_ages.append(f"Child {i}: Age: {age}")
+            else:
+                children_ages.append(f"Child {i}: Age: N/A")
+        except ValueError:
+            errors.append(f"Child {i} Age must be a valid number.")
+
+    if errors:
+        logging.warning(f"Validation errors: {errors}")
+        return render_template('oocyte_index.html', errors=errors, form_data=form_data, today=datetime.now().date().isoformat())
+
+    form_data['children_ages'] = '\n'.join(children_ages) if children_ages else 'None'
+
+    # Oocyte template
+    templates = [
+        {
+            'file': 'templates_docx/oocyte_donor_info.docx',
+            'output': 'oocyte_donor_info_{full_name}_{timestamp}.docx',
+            'fields': ['full_name', 'aadhaar_number', 'date_of_birth', 'date_of_discussion', 'date_of_consultancy', 'num_children', 'children_ages', 'date']
+        }
+    ]
+
+    # Generate document and prepare ZIP
+    generated_files = []
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    zip_filename = f"oocyte_donor_documents_{form_data['full_name'].replace(' ', '_') or 'Unknown'}_{timestamp}.zip"
+    zip_path = os.path.join('downloads', zip_filename)
+
+    try:
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for template in templates:
+                try:
+                    doc = Document(template['file'])
+                    for paragraph in doc.paragraphs:
+                        for key in template['fields']:
+                            placeholder = f'{{{key}}}'
+                            if placeholder in paragraph.text:
+                                paragraph.text = paragraph.text.replace(placeholder, form_data[key] or 'N/A')
+                    output_filename = template['output'].format(full_name=form_data['full_name'].replace(' ', '_') or 'Unknown', timestamp=timestamp)
+                    output_path = os.path.join('output', output_filename)
+                    doc.save(output_path)
+                    zipf.write(output_path, output_filename)
+                    generated_files.append(output_path)
+                    logging.info(f"Generated {output_filename}")
+                except FileNotFoundError as e:
+                    logging.error(f"Template file {template['file']} not found: {str(e)}")
+                    return render_template('error.html', error=f"Template file {template['file']} not found.")
+                except Exception as e:
+                    logging.error(f"Error processing {template['file']}: {str(e)}")
+                    return render_template('error.html', error=f"Error processing document: {str(e)}")
+    except Exception as e:
+        logging.error(f"Error creating ZIP file: {str(e)}")
+        return render_template('error.html', error=f"Error creating ZIP file: {str(e)}")
+
+    logging.info(f"ZIP file created: {zip_filename}")
+    return render_template('success.html', zip_filename=zip_filename, errors=[], donor_type='oocyte')
 
 @app.route('/download/<filename>')
 @limiter.limit("5 per minute")
@@ -273,4 +398,4 @@ def ratelimit_handler(e):
     return render_template('error.html', error="Too many requests. Please try again later."), 429
 
 if __name__ == '__main__':
-    app.run(debug=False)  # Disable debug mode for production
+    app.run(debug=False)
