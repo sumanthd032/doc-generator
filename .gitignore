@@ -1,1 +1,6 @@
-venv/ pycache/ *.pyc output/ downloads/ logs/
+venv
+pycache/ 
+*.pyc 
+output/ 
+downloads/ 
+logs/
