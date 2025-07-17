@@ -8,7 +8,7 @@ import re
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../static", template_folder="../templates")
 
 # Setup logging
 if not os.path.exists('logs'):
@@ -387,4 +387,4 @@ def ratelimit_handler(e):
     return render_template('error.html', error="Too many requests. Please try again later."), 429
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run()

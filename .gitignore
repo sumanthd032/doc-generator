@@ -1,6 +1,7 @@
-venv
-pycache/ 
-*.pyc 
-output/ 
-downloads/ 
-logs/
+venv/
+__pycache__/
+*.pyc
+downloads/*
+logs/*
+output/*
+.vercel
