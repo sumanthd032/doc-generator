@@ -86,3 +86,40 @@
 2025-07-17 19:24:21,196 INFO: 127.0.0.1 - - [17/Jul/2025 19:24:21] "GET /oocyte HTTP/1.1" 200 -
 2025-07-17 19:24:21,661 INFO: 127.0.0.1 - - [17/Jul/2025 19:24:21] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
 2025-07-17 19:24:21,816 INFO: 127.0.0.1 - - [17/Jul/2025 19:24:21] "[36mGET /static/oocyte_scripts.js HTTP/1.1[0m" 304 -
+2025-07-17 19:33:44,436 INFO: 127.0.0.1 - - [17/Jul/2025 19:33:44] "GET /oocyte HTTP/1.1" 200 -
+2025-07-17 19:33:44,574 INFO: 127.0.0.1 - - [17/Jul/2025 19:33:44] "[36mGET /static/oocyte_scripts.js HTTP/1.1[0m" 304 -
+2025-07-17 19:33:44,590 INFO: 127.0.0.1 - - [17/Jul/2025 19:33:44] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:33:47,495 INFO: 127.0.0.1 - - [17/Jul/2025 19:33:47] "GET / HTTP/1.1" 200 -
+2025-07-17 19:33:47,573 INFO: 127.0.0.1 - - [17/Jul/2025 19:33:47] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:33:56,139 INFO: 127.0.0.1 - - [17/Jul/2025 19:33:56] "GET /sperm HTTP/1.1" 200 -
+2025-07-17 19:33:56,236 INFO: 127.0.0.1 - - [17/Jul/2025 19:33:56] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:33:56,305 INFO: 127.0.0.1 - - [17/Jul/2025 19:33:56] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+2025-07-17 19:53:07,647 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:07] "GET / HTTP/1.1" 200 -
+2025-07-17 19:53:08,825 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:08] "GET /static/styles.css HTTP/1.1" 200 -
+2025-07-17 19:53:22,343 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:22] "GET /sperm HTTP/1.1" 200 -
+2025-07-17 19:53:22,440 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:22] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:53:22,511 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:22] "GET /static/scripts.js HTTP/1.1" 200 -
+2025-07-17 19:53:44,011 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-17 19:53:44,012 INFO: [33mPress CTRL+C to quit[0m
+2025-07-17 19:53:51,165 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:51] "GET / HTTP/1.1" 200 -
+2025-07-17 19:53:51,354 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:51] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:53:53,117 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:53] "GET /sperm HTTP/1.1" 200 -
+2025-07-17 19:53:53,178 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:53] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:53:53,184 INFO: 127.0.0.1 - - [17/Jul/2025 19:53:53] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+2025-07-17 19:56:26,752 INFO: Processing sperm donor form submission from 127.0.0.1
+2025-07-17 19:56:27,023 INFO: Generated form_15_shae_20250717_195626.docx
+2025-07-17 19:56:27,157 INFO: Generated medical_history_shae_20250717_195626.docx
+2025-07-17 19:56:27,356 INFO: Generated donor_info_shae_20250717_195626.docx
+2025-07-17 19:56:27,356 INFO: ZIP file created: sperm_donor_documents_shae_20250717_195626.zip
+2025-07-17 19:56:27,364 INFO: 127.0.0.1 - - [17/Jul/2025 19:56:27] "POST /generate_sperm HTTP/1.1" 200 -
+2025-07-17 19:56:27,436 INFO: 127.0.0.1 - - [17/Jul/2025 19:56:27] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 19:56:32,184 INFO: Downloaded sperm_donor_documents_shae_20250717_195626.zip by 127.0.0.1
+2025-07-17 19:56:32,186 INFO: 127.0.0.1 - - [17/Jul/2025 19:56:32] "GET /download/sperm_donor_documents_shae_20250717_195626.zip HTTP/1.1" 200 -
+2025-07-17 20:01:05,476 INFO: 127.0.0.1 - - [17/Jul/2025 20:01:05] "GET / HTTP/1.1" 200 -
+2025-07-17 20:01:06,044 INFO: 127.0.0.1 - - [17/Jul/2025 20:01:06] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 20:01:08,075 INFO: 127.0.0.1 - - [17/Jul/2025 20:01:08] "GET /oocyte HTTP/1.1" 200 -
+2025-07-17 20:01:08,131 INFO: 127.0.0.1 - - [17/Jul/2025 20:01:08] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 20:01:08,344 INFO: 127.0.0.1 - - [17/Jul/2025 20:01:08] "GET /static/oocyte_scripts.js HTTP/1.1" 200 -
+2025-07-17 20:01:25,664 INFO: 127.0.0.1 - - [17/Jul/2025 20:01:25] "GET / HTTP/1.1" 200 -
+2025-07-17 20:01:25,885 INFO: 127.0.0.1 - - [17/Jul/2025 20:01:25] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -

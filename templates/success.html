@@ -8,7 +8,7 @@
     <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <h1 class="text-center mb-4">{{ 'Sperm' if donor_type == 'sperm' else 'Oocyte' }} Donor Documents Generated Successfully</h1>
         {% if errors %}
             <div class="alert alert-danger">
@@ -19,12 +19,12 @@
                 </ul>
             </div>
         {% else %}
-            <p class="text-center">Your {{ 'sperm' if donor_type == 'sperm' else 'oocyte' }} donor documents have been generated and are ready for download.</p>
-            <div class="text-center">
+            <p class="text-center lead mb-4">Your {{ 'sperm' if donor_type == 'sperm' else 'oocyte' }} donor documents have been generated and are ready for download.</p>
+            <div class="text-center mb-4">
                 <a href="{{ url_for('download_zip', filename=zip_filename) }}" class="btn btn-primary btn-lg">Download ZIP File</a>
             </div>
         {% endif %}
-        <div class="text-center mt-3">
+        <div class="text-center">
             <a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
         </div>
     </div>

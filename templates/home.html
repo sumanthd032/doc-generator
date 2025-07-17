@@ -8,10 +8,10 @@
     <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="container home-container mt-5">
+    <div class="home-container">
         <h1 class="text-center mb-4">Donor Document Generator</h1>
-        <p class="text-center mb-4">Select a donor type to fill out the appropriate form and generate documents.</p>
-        <div class="d-flex justify-content-center flex-wrap">
+        <p class="text-center mb-4 lead">Select a donor type to fill out the appropriate form and generate documents.</p>
+        <div class="d-flex justify-content-center flex-wrap gap-3">
             <a href="{{ url_for('sperm_index') }}" class="btn btn-home">Sperm Donor Form</a>
             <a href="{{ url_for('oocyte_index') }}" class="btn btn-home">Oocyte Donor Form</a>
         </div>

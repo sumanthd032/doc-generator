@@ -43,8 +43,8 @@ def home():
 def sperm_index():
     form_data = {
         'full_name': '', 'address': '', 'pin_code': '', 'contact_number': '', 'aadhaar_number': '',
-        'date_of_birth': '', 'email_address': '', 'donor_id': '', 'date_of_consultancy': '',
-        'date_of_discussion': '', 'genetic_disorders': '', 'family_history': '', 'current_medications': '',
+        'date_of_birth': '', 'email_address': '', 'donor_id': '', 'date_of_discussion': '',
+        'date_of_consultancy': '', 'genetic_disorders': '', 'family_history': '', 'current_medications': '',
         'allergies': '', 'last_medical_exam': '', 'hiv_results': '', 'hbv_results': '', 'hcv_results': '',
         'vdrl_results': '', 'serious_illness': '', 'smoking': 'No', 'smoking_frequency': '',
         'cigarettes_per_day': '', 'alcohol': 'No', 'alcohol_frequency': '', 'alcohol_amount': '',
@@ -77,8 +77,8 @@ def generate_sperm_document():
         'date_of_birth': request.form.get('date_of_birth', '').strip(),
         'email_address': request.form.get('email_address', '').strip(),
         'donor_id': request.form.get('donor_id', '').strip(),
-        'date_of_consultancy': request.form.get('date_of_consultancy', '').strip(),
         'date_of_discussion': request.form.get('date_of_discussion', '').strip(),
+        'date_of_consultancy': request.form.get('date_of_consultancy', '').strip(),
         'genetic_disorders': request.form.get('genetic_disorders', '').strip(),
         'family_history': request.form.get('family_history', '').strip(),
         'current_medications': request.form.get('current_medications', '').strip(),
@@ -116,14 +116,14 @@ def generate_sperm_document():
         'date': datetime.now().strftime('%d/%m/%y')
     }
 
-    # Validate required fields
+    # Server-side validation
     required_fields = ['full_name', 'aadhaar_number', 'date_of_discussion', 'date_of_consultancy']
     errors = []
     for field in required_fields:
         if not form_data[field]:
             errors.append(f"{field.replace('_', ' ').title()} is required.")
 
-    # Validate Aadhaar number (12 digits)
+    # Validate Aadhaar number
     if form_data['aadhaar_number'] and not re.match(r'^\d{12}$', form_data['aadhaar_number']):
         errors.append("Aadhaar Number must be 12 digits.")
 
@@ -131,15 +131,15 @@ def generate_sperm_document():
     if form_data['email_address'] and not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', form_data['email_address']):
         errors.append("Invalid email address.")
 
-    # Validate phone number (10 digits, optional)
+    # Validate phone number
     if form_data['contact_number'] and not re.match(r'^\d{10}$|^$', form_data['contact_number']):
         errors.append("Contact Number must be 10 digits if provided.")
 
-    # Validate PIN code (6 digits, optional)
+    # Validate PIN code
     if form_data['pin_code'] and not re.match(r'^\d{6}$|^$', form_data['pin_code']):
         errors.append("PIN Code must be 6 digits if provided.")
 
-    # Validate dates (not in future, optional)
+    # Validate dates
     today = datetime.now().date()
     for date_field in ['date_of_birth', 'last_medical_exam', 'date_of_discussion', 'date_of_consultancy']:
         if form_data[date_field]:
@@ -160,28 +160,7 @@ def generate_sperm_document():
     except ValueError:
         errors.append("Number of children must be a valid number.")
 
-    # Validate numeric fields (optional)
-    for field in ['cigarettes_per_day']:
-        if form_data[field]:
-            try:
-                value = int(form_data[field])
-                if value < 0:
-                    errors.append(f"{field.replace('_', ' ').title()} cannot be negative.")
-            except ValueError:
-                errors.append(f"{field.replace('_', ' ').title()} must be a valid number.")
-
-    # Validate conditional fields
-    if form_data['smoking'] == 'Yes' and not (form_data['smoking_frequency'] and form_data['cigarettes_per_day']):
-        errors.append("Smoking Frequency and Cigarettes per Day are required if smoking is Yes.")
-    if form_data['alcohol'] == 'Yes' and not (form_data['alcohol_frequency'] and form_data['alcohol_amount']):
-        errors.append("Alcohol Frequency and Amount are required if alcohol consumption is Yes.")
-
-    # Validate blood test results
-    for field in ['hiv_results', 'hbv_results', 'hcv_results', 'vdrl_results']:
-        if form_data[field] and form_data[field].lower() not in ['negative', 'positive', 'pending', '']:
-            errors.append(f"{field.replace('_', ' ').title()} must be 'Negative', 'Positive', or 'Pending'.")
-
-    # Handle dynamic children ages
+    # Validate children ages
     children_ages = []
     for i in range(1, num_children + 1):
         age = request.form.get(f'child_{i}_age', '').strip()
@@ -196,9 +175,20 @@ def generate_sperm_document():
         except ValueError:
             errors.append(f"Child {i} Age must be a valid number.")
 
+    # Validate conditional fields
+    if form_data['smoking'] == 'Yes' and not (form_data['smoking_frequency'] and form_data['cigarettes_per_day']):
+        errors.append("Smoking Frequency and Cigarettes per Day are required if smoking is Yes.")
+    if form_data['alcohol'] == 'Yes' and not (form_data['alcohol_frequency'] and form_data['alcohol_amount']):
+        errors.append("Alcohol Frequency and Amount are required if alcohol consumption is Yes.")
+
+    # Validate blood test results
+    for field in ['hiv_results', 'hbv_results', 'hcv_results', 'vdrl_results']:
+        if form_data[field] and form_data[field].lower() not in ['negative', 'positive', 'pending', '']:
+            errors.append(f"{field.replace('_', ' ').title()} must be 'Negative', 'Positive', or 'Pending'.")
+
     if errors:
         logging.warning(f"Validation errors: {errors}")
-        return render_template('sperm_index.html', errors=errors, form_data=form_data, today=datetime.now().date().isoformat())
+        return render_template('sperm_index.html', errors=errors, form_data=form_data, today=datetime.now().date().isoformat(), show_modal=True)
 
     form_data['children_ages'] = '\n'.join(children_ages) if children_ages else 'None'
 
@@ -270,18 +260,18 @@ def generate_oocyte_document():
         'date': datetime.now().strftime('%d/%m/%y')
     }
 
-    # Validate required fields
+    # Server-side validation
     required_fields = ['full_name', 'aadhaar_number', 'date_of_discussion', 'date_of_consultancy']
     errors = []
     for field in required_fields:
         if not form_data[field]:
             errors.append(f"{field.replace('_', ' ').title()} is required.")
 
-    # Validate Aadhaar number (12 digits)
+    # Validate Aadhaar number
     if form_data['aadhaar_number'] and not re.match(r'^\d{12}$', form_data['aadhaar_number']):
         errors.append("Aadhaar Number must be 12 digits.")
 
-    # Validate dates (not in future, optional)
+    # Validate dates
     today = datetime.now().date()
     for date_field in ['date_of_birth', 'date_of_discussion', 'date_of_consultancy']:
         if form_data[date_field]:
@@ -302,7 +292,7 @@ def generate_oocyte_document():
     except ValueError:
         errors.append("Number of children must be a valid number.")
 
-    # Handle dynamic children ages
+    # Validate children ages
     children_ages = []
     for i in range(1, num_children + 1):
         age = request.form.get(f'child_{i}_age', '').strip()
@@ -319,7 +309,7 @@ def generate_oocyte_document():
 
     if errors:
         logging.warning(f"Validation errors: {errors}")
-        return render_template('oocyte_index.html', errors=errors, form_data=form_data, today=datetime.now().date().isoformat())
+        return render_template('oocyte_index.html', errors=errors, form_data=form_data, today=datetime.now().date().isoformat(), show_modal=True)
 
     form_data['children_ages'] = '\n'.join(children_ages) if children_ages else 'None'
 
@@ -374,7 +364,6 @@ def download_zip(filename):
     try:
         response = send_file(zip_path, as_attachment=True)
         logging.info(f"Downloaded {filename} by {request.remote_addr}")
-        # Clean up generated files and ZIP
         for file in os.listdir('output'):
             try:
                 os.remove(os.path.join('output', file))
