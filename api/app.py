@@ -10,11 +10,19 @@ from flask_limiter.util import get_remote_address
 
 app = Flask(__name__, static_folder="../static", template_folder="../templates")
 
+# Define directories using /tmp/ for Vercel compatibility
+LOGS_DIR = "/tmp/logs"
+OUTPUT_DIR = "/tmp/output"
+DOWNLOAD_DIR = "/tmp/downloads"
+TEMPLATES_DIR = "templates_docx"
+
+# Create directories if they don't exist
+for directory in [LOGS_DIR, OUTPUT_DIR, DOWNLOAD_DIR]:
+    os.makedirs(directory, exist_ok=True)
+
 # Setup logging
-if not os.path.exists('logs'):
-    os.makedirs('logs')
 logging.basicConfig(
-    filename='logs/app.log',
+    filename=os.path.join(LOGS_DIR, 'app.log'),
     level=logging.INFO,
     format='%(asctime)s %(levelname)s: %(message)s'
 )
@@ -26,12 +34,6 @@ limiter = Limiter(
     default_limits=["200 per day", "50 per hour"],
     storage_uri="memory://"
 )
-
-# Ensure output and downloads directories exist
-if not os.path.exists('output'):
-    os.makedirs('output')
-if not os.path.exists('downloads'):
-    os.makedirs('downloads')
 
 @app.route('/')
 @limiter.limit("10 per minute")
@@ -195,17 +197,17 @@ def generate_sperm_document():
     # List of templates and their required fields
     templates = [
         {
-            'file': 'templates_docx/form_15.docx',
+            'file': os.path.join(TEMPLATES_DIR, 'form_15.docx'),
             'output': 'form_15_{full_name}_{timestamp}.docx',
             'fields': ['full_name', 'address', 'pin_code', 'contact_number', 'aadhaar_number', 'date_of_discussion', 'date_of_consultancy', 'date']
         },
         {
-            'file': 'templates_docx/medical_history.docx',
+            'file': os.path.join(TEMPLATES_DIR, 'medical_history.docx'),
             'output': 'medical_history_{full_name}_{timestamp}.docx',
             'fields': ['full_name', 'date_of_birth', 'address', 'contact_number', 'email_address', 'aadhaar_number', 'donor_id', 'date', 'last_medical_exam', 'hiv_results', 'hbv_results', 'hcv_results', 'vdrl_results', 'family_history', 'serious_illness', 'current_medications', 'allergies', 'consent_cryopreservation', 'consent_art_bank', 'consent_registry']
         },
         {
-            'file': 'templates_docx/donor_info.docx',
+            'file': os.path.join(TEMPLATES_DIR, 'donor_info.docx'),
             'output': 'donor_info_{full_name}_{timestamp}.docx',
             'fields': ['full_name', 'date_of_birth', 'contact_number', 'email_address', 'aadhaar_number', 'genetic_disorders', 'family_history', 'current_medications', 'allergies', 'smoking', 'smoking_frequency', 'cigarettes_per_day', 'alcohol', 'alcohol_frequency', 'alcohol_amount', 'drug_use', 'diet', 'marital_status', 'num_children', 'donor_experience', 'donation_frequency', 'height', 'weight', 'education', 'mother_tongue', 'skin_colour', 'hair_colour', 'eye_colour', 'religion', 'occupation', 'date', 'children_ages']
         }
@@ -215,7 +217,7 @@ def generate_sperm_document():
     generated_files = []
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     zip_filename = f"sperm_donor_documents_{form_data['full_name'].replace(' ', '_') or 'Unknown'}_{timestamp}.zip"
-    zip_path = os.path.join('downloads', zip_filename)
+    zip_path = os.path.join(DOWNLOAD_DIR, zip_filename)
 
     try:
         with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
@@ -228,20 +230,20 @@ def generate_sperm_document():
                             if placeholder in paragraph.text:
                                 paragraph.text = paragraph.text.replace(placeholder, form_data[key] or 'N/A')
                     output_filename = template['output'].format(full_name=form_data['full_name'].replace(' ', '_') or 'Unknown', timestamp=timestamp)
-                    output_path = os.path.join('output', output_filename)
+                    output_path = os.path.join(OUTPUT_DIR, output_filename)
                     doc.save(output_path)
                     zipf.write(output_path, output_filename)
                     generated_files.append(output_path)
                     logging.info(f"Generated {output_filename}")
                 except FileNotFoundError as e:
                     logging.error(f"Template file {template['file']} not found: {str(e)}")
-                    return render_template('error.html', error=f"Template file {template['file']} not found.")
+                    return render_template('error.html', errors=[f"Template file {template['file']} not found."], show_modal=True)
                 except Exception as e:
                     logging.error(f"Error processing {template['file']}: {str(e)}")
-                    return render_template('error.html', error=f"Error processing document: {str(e)}")
+                    return render_template('error.html', errors=[f"Error processing document: {str(e)}"], show_modal=True)
     except Exception as e:
         logging.error(f"Error creating ZIP file: {str(e)}")
-        return render_template('error.html', error=f"Error creating ZIP file: {str(e)}")
+        return render_template('error.html', errors=[f"Error creating ZIP file: {str(e)}"], show_modal=True)
 
     logging.info(f"ZIP file created: {zip_filename}")
     return render_template('success.html', zip_filename=zip_filename, errors=[], donor_type='sperm')
@@ -316,7 +318,7 @@ def generate_oocyte_document():
     # Oocyte template
     templates = [
         {
-            'file': 'templates_docx/oocyte_donor_info.docx',
+            'file': os.path.join(TEMPLATES_DIR, 'oocyte_donor_info.docx'),
             'output': 'oocyte_donor_info_{full_name}_{timestamp}.docx',
             'fields': ['full_name', 'aadhaar_number', 'date_of_birth', 'date_of_discussion', 'date_of_consultancy', 'num_children', 'children_ages', 'date']
         }
@@ -326,7 +328,7 @@ def generate_oocyte_document():
     generated_files = []
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     zip_filename = f"oocyte_donor_documents_{form_data['full_name'].replace(' ', '_') or 'Unknown'}_{timestamp}.zip"
-    zip_path = os.path.join('downloads', zip_filename)
+    zip_path = os.path.join(DOWNLOAD_DIR, zip_filename)
 
     try:
         with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
@@ -339,20 +341,20 @@ def generate_oocyte_document():
                             if placeholder in paragraph.text:
                                 paragraph.text = paragraph.text.replace(placeholder, form_data[key] or 'N/A')
                     output_filename = template['output'].format(full_name=form_data['full_name'].replace(' ', '_') or 'Unknown', timestamp=timestamp)
-                    output_path = os.path.join('output', output_filename)
+                    output_path = os.path.join(OUTPUT_DIR, output_filename)
                     doc.save(output_path)
                     zipf.write(output_path, output_filename)
                     generated_files.append(output_path)
                     logging.info(f"Generated {output_filename}")
                 except FileNotFoundError as e:
                     logging.error(f"Template file {template['file']} not found: {str(e)}")
-                    return render_template('error.html', error=f"Template file {template['file']} not found.")
+                    return render_template('error.html', errors=[f"Template file {template['file']} not found."], show_modal=True)
                 except Exception as e:
                     logging.error(f"Error processing {template['file']}: {str(e)}")
-                    return render_template('error.html', error=f"Error processing document: {str(e)}")
+                    return render_template('error.html', errors=[f"Error processing document: {str(e)}"], show_modal=True)
     except Exception as e:
         logging.error(f"Error creating ZIP file: {str(e)}")
-        return render_template('error.html', error=f"Error creating ZIP file: {str(e)}")
+        return render_template('error.html', errors=[f"Error creating ZIP file: {str(e)}"], show_modal=True)
 
     logging.info(f"ZIP file created: {zip_filename}")
     return render_template('success.html', zip_filename=zip_filename, errors=[], donor_type='oocyte')
@@ -360,15 +362,17 @@ def generate_oocyte_document():
 @app.route('/download/<filename>')
 @limiter.limit("5 per minute")
 def download_zip(filename):
-    zip_path = os.path.join('downloads', filename)
+    zip_path = os.path.join(DOWNLOAD_DIR, filename)
     try:
         response = send_file(zip_path, as_attachment=True)
         logging.info(f"Downloaded {filename} by {request.remote_addr}")
-        for file in os.listdir('output'):
+        # Clean up output files
+        for file in os.listdir(OUTPUT_DIR):
             try:
-                os.remove(os.path.join('output', file))
+                os.remove(os.path.join(OUTPUT_DIR, file))
             except Exception as e:
                 logging.warning(f"Failed to delete output file {file}: {str(e)}")
+        # Clean up ZIP file
         try:
             os.remove(zip_path)
         except Exception as e:
@@ -376,15 +380,15 @@ def download_zip(filename):
         return response
     except FileNotFoundError:
         logging.error(f"ZIP file {filename} not found")
-        return render_template('error.html', error="ZIP file not found. It may have already been downloaded or deleted.")
+        return render_template('error.html', errors=["ZIP file not found. It may have already been downloaded or deleted."], show_modal=True)
     except Exception as e:
         logging.error(f"Error downloading {filename}: {str(e)}")
-        return render_template('error.html', error=f"Error downloading file: {str(e)}")
+        return render_template('error.html', errors=[f"Error downloading file: {str(e)}"], show_modal=True)
 
 @app.errorhandler(429)
 def ratelimit_handler(e):
     logging.warning(f"Rate limit exceeded for {request.remote_addr}: {str(e)}")
-    return render_template('error.html', error="Too many requests. Please try again later."), 429
+    return render_template('error.html', errors=["Too many requests. Please try again later."], show_modal=True), 429
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
