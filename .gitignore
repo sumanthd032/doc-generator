@@ -1,5 +1,1 @@
-venv/
-__pycache__/
-*.pyc
-output/
-downloads/
+venv/ pycache/ *.pyc output/ downloads/ logs/

@@ -1,0 +1,26 @@
+2025-07-17 17:37:27,015 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-17 17:37:27,015 INFO: [33mPress CTRL+C to quit[0m
+2025-07-17 17:37:48,866 INFO: 127.0.0.1 - - [17/Jul/2025 17:37:48] "GET / HTTP/1.1" 200 -
+2025-07-17 17:37:51,774 INFO: 127.0.0.1 - - [17/Jul/2025 17:37:51] "GET /static/styles.css HTTP/1.1" 200 -
+2025-07-17 17:37:51,934 INFO: 127.0.0.1 - - [17/Jul/2025 17:37:51] "GET /static/scripts.js HTTP/1.1" 200 -
+2025-07-17 17:39:53,045 INFO: Processing form submission from 127.0.0.1
+2025-07-17 17:39:53,245 INFO: Generated form_15_shae_20250717_173953.docx
+2025-07-17 17:39:53,476 INFO: Generated medical_history_shae_20250717_173953.docx
+2025-07-17 17:39:53,585 INFO: Generated donor_info_shae_20250717_173953.docx
+2025-07-17 17:39:53,585 INFO: ZIP file created: donor_documents_shae_20250717_173953.zip
+2025-07-17 17:39:53,588 INFO: 127.0.0.1 - - [17/Jul/2025 17:39:53] "POST /generate HTTP/1.1" 200 -
+2025-07-17 17:39:53,850 INFO: 127.0.0.1 - - [17/Jul/2025 17:39:53] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 17:40:27,721 INFO: 127.0.0.1 - - [17/Jul/2025 17:40:27] "GET / HTTP/1.1" 200 -
+2025-07-17 17:40:27,769 INFO: 127.0.0.1 - - [17/Jul/2025 17:40:27] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 17:40:27,831 INFO: 127.0.0.1 - - [17/Jul/2025 17:40:27] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -
+2025-07-17 17:42:21,446 INFO: Processing form submission from 127.0.0.1
+2025-07-17 17:42:21,488 INFO: Generated form_15_shae_20250717_174221.docx
+2025-07-17 17:42:21,549 INFO: Generated medical_history_shae_20250717_174221.docx
+2025-07-17 17:42:21,649 INFO: Generated donor_info_shae_20250717_174221.docx
+2025-07-17 17:42:21,650 INFO: ZIP file created: donor_documents_shae_20250717_174221.zip
+2025-07-17 17:42:21,650 INFO: 127.0.0.1 - - [17/Jul/2025 17:42:21] "POST /generate HTTP/1.1" 200 -
+2025-07-17 17:42:21,697 INFO: 127.0.0.1 - - [17/Jul/2025 17:42:21] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 17:42:34,090 INFO: 127.0.0.1 - - [17/Jul/2025 17:42:34] "GET / HTTP/1.1" 200 -
+2025-07-17 17:42:34,134 INFO: 127.0.0.1 - - [17/Jul/2025 17:42:34] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
+2025-07-17 17:42:34,135 INFO: 127.0.0.1 - - [17/Jul/2025 17:42:34] "[36mGET /static/scripts.js HTTP/1.1[0m" 304 -

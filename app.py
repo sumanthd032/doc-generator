@@ -3,10 +3,29 @@ from docx import Document
 import os
 from datetime import datetime
 import zipfile
-import shutil
+import logging
 import re
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
+
+# Setup logging
+if not os.path.exists('logs'):
+    os.makedirs('logs')
+logging.basicConfig(
+    filename='logs/app.log',
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
+
+# Setup rate limiting
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
 
 # Ensure output and downloads directories exist
 if not os.path.exists('output'):
@@ -15,8 +34,8 @@ if not os.path.exists('downloads'):
     os.makedirs('downloads')
 
 @app.route('/')
+@limiter.limit("10 per minute")
 def home():
-    # Pass empty form_data to avoid UndefinedError on initial load
     form_data = {
         'full_name': '', 'address': '', 'pin_code': '', 'contact_number': '', 'aadhaar_number': '',
         'date_of_birth': '', 'email_address': '', 'donor_id': '', 'date_of_consultancy': '',
@@ -29,11 +48,12 @@ def home():
         'mother_tongue': '', 'skin_colour': '', 'hair_colour': '', 'eye_colour': '', 'religion': '',
         'occupation': '', 'consent_cryopreservation': 'No', 'consent_art_bank': 'No', 'consent_registry': 'No'
     }
-    return render_template('index.html', form_data=form_data, errors=[])
+    return render_template('index.html', form_data=form_data, errors=[], today=datetime.now().date().isoformat())
 
 @app.route('/generate', methods=['POST'])
+@limiter.limit("5 per minute")
 def generate_document():
-    # Collect and validate form data
+    logging.info(f"Processing form submission from {request.remote_addr}")
     form_data = {
         'full_name': request.form.get('full_name', '').strip(),
         'address': request.form.get('address', '').strip(),
@@ -121,7 +141,7 @@ def generate_document():
         num_children = int(form_data['num_children']) if form_data['num_children'] else 0
         if num_children < 0:
             errors.append("Number of children cannot be negative.")
-        elif num_children > 20:  # Reasonable upper limit
+        elif num_children > 20:
             errors.append("Number of children cannot exceed 20.")
     except ValueError:
         errors.append("Number of children must be a valid number.")
@@ -142,13 +162,10 @@ def generate_document():
     if form_data['alcohol'] == 'Yes' and not (form_data['alcohol_frequency'] and form_data['alcohol_amount']):
         errors.append("Alcohol Frequency and Amount are required if alcohol consumption is Yes.")
 
-    # Validate blood test results (optional, but if provided, should be sensible)
+    # Validate blood test results
     for field in ['hiv_results', 'hbv_results', 'hcv_results', 'vdrl_results']:
         if form_data[field] and form_data[field].lower() not in ['negative', 'positive', 'pending', '']:
             errors.append(f"{field.replace('_', ' ').title()} must be 'Negative', 'Positive', or 'Pending'.")
-
-    if errors:
-        return render_template('index.html', errors=errors, form_data=form_data)
 
     # Handle dynamic children ages
     children_ages = []
@@ -164,8 +181,11 @@ def generate_document():
                 children_ages.append(f"Child {i}: Age: N/A")
         except ValueError:
             errors.append(f"Child {i} Age must be a valid number.")
+
     if errors:
-        return render_template('index.html', errors=errors, form_data=form_data)
+        logging.warning(f"Validation errors: {errors}")
+        return render_template('index.html', errors=errors, form_data=form_data, today=datetime.now().date().isoformat())
+
     form_data['children_ages'] = '\n'.join(children_ages) if children_ages else 'None'
 
     # List of templates and their required fields
@@ -190,7 +210,7 @@ def generate_document():
     # Generate documents and prepare ZIP
     generated_files = []
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    zip_filename = f"donor_documents_{form_data['full_name'].replace(' ', '_')}_{timestamp}.zip"
+    zip_filename = f"donor_documents_{form_data['full_name'].replace(' ', '_') or 'Unknown'}_{timestamp}.zip"
     zip_path = os.path.join('downloads', zip_filename)
 
     try:
@@ -208,36 +228,49 @@ def generate_document():
                     doc.save(output_path)
                     zipf.write(output_path, output_filename)
                     generated_files.append(output_path)
-                except FileNotFoundError:
-                    return render_template('index.html', errors=[f"Template file {template['file']} not found."], form_data=form_data)
+                    logging.info(f"Generated {output_filename}")
+                except FileNotFoundError as e:
+                    logging.error(f"Template file {template['file']} not found: {str(e)}")
+                    return render_template('error.html', error=f"Template file {template['file']} not found.")
                 except Exception as e:
-                    return render_template('index.html', errors=[f"Error processing {template['file']}: {str(e)}"], form_data=form_data)
+                    logging.error(f"Error processing {template['file']}: {str(e)}")
+                    return render_template('error.html', error=f"Error processing document: {str(e)}")
     except Exception as e:
-        return render_template('index.html', errors=[f"Error creating ZIP file: {str(e)}"], form_data=form_data)
+        logging.error(f"Error creating ZIP file: {str(e)}")
+        return render_template('error.html', error=f"Error creating ZIP file: {str(e)}")
 
-    # Render success page with download link
+    logging.info(f"ZIP file created: {zip_filename}")
     return render_template('success.html', zip_filename=zip_filename, errors=[])
 
 @app.route('/download/<filename>')
+@limiter.limit("5 per minute")
 def download_zip(filename):
     zip_path = os.path.join('downloads', filename)
     try:
         response = send_file(zip_path, as_attachment=True)
-        # Clean up generated files and ZIP after sending response
+        logging.info(f"Downloaded {filename} by {request.remote_addr}")
+        # Clean up generated files and ZIP
         for file in os.listdir('output'):
             try:
                 os.remove(os.path.join('output', file))
-            except:
-                pass
+            except Exception as e:
+                logging.warning(f"Failed to delete output file {file}: {str(e)}")
         try:
             os.remove(zip_path)
-        except:
-            pass
+        except Exception as e:
+            logging.warning(f"Failed to delete ZIP file {zip_path}: {str(e)}")
         return response
     except FileNotFoundError:
-        return render_template('success.html', errors=["ZIP file not found. It may have already been downloaded or deleted."], zip_filename=None)
+        logging.error(f"ZIP file {filename} not found")
+        return render_template('error.html', error="ZIP file not found. It may have already been downloaded or deleted.")
     except Exception as e:
-        return render_template('success.html', errors=[f"Error downloading file: {str(e)}"], zip_filename=None)
+        logging.error(f"Error downloading {filename}: {str(e)}")
+        return render_template('error.html', error=f"Error downloading file: {str(e)}")
+
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    logging.warning(f"Rate limit exceeded for {request.remote_addr}: {str(e)}")
+    return render_template('error.html', error="Too many requests. Please try again later."), 429
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)  # Disable debug mode for production
