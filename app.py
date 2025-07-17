@@ -1,13 +1,17 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from docx import Document
 import os
 from datetime import datetime
+import zipfile
+import shutil
 
 app = Flask(__name__)
 
-# Ensure output directory exists
+# Ensure output and downloads directories exist
 if not os.path.exists('output'):
     os.makedirs('output')
+if not os.path.exists('downloads'):
+    os.makedirs('downloads')
 
 @app.route('/')
 def home():
@@ -84,26 +88,47 @@ def generate_document():
         }
     ]
 
-    # Generate documents
+    # Generate documents and prepare ZIP
     generated_files = []
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    for template in templates:
-        try:
-            doc = Document(template['file'])
-            for paragraph in doc.paragraphs:
-                for key in template['fields']:
-                    placeholder = f'{{{key}}}'
-                    if placeholder in paragraph.text:
-                        paragraph.text = paragraph.text.replace(placeholder, form_data[key])
-            output_filename = template['output'].format(full_name=form_data['full_name'].replace(' ', '_'), timestamp=timestamp)
-            output_path = os.path.join('output', output_filename)
-            doc.save(output_path)
-            generated_files.append(output_path)
-        except FileNotFoundError:
-            return f"Error: Template file {template['file']} not found.", 500
+    zip_filename = f"donor_documents_{form_data['full_name'].replace(' ', '_')}_{timestamp}.zip"
+    zip_path = os.path.join('downloads', zip_filename)
 
-    # Return success message (download will be implemented in Step 4)
-    return f"Documents generated successfully: {', '.join(generated_files)}"
+    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for template in templates:
+            try:
+                doc = Document(template['file'])
+                for paragraph in doc.paragraphs:
+                    for key in template['fields']:
+                        placeholder = f'{{{key}}}'
+                        if placeholder in paragraph.text:
+                            paragraph.text = paragraph.text.replace(placeholder, form_data[key])
+                output_filename = template['output'].format(full_name=form_data['full_name'].replace(' ', '_'), timestamp=timestamp)
+                output_path = os.path.join('output', output_filename)
+                doc.save(output_path)
+                zipf.write(output_path, output_filename)
+                generated_files.append(output_path)
+            except FileNotFoundError:
+                return f"Error: Template file {template['file']} not found.", 500
+
+    # Render success page with download link
+    return render_template('success.html', zip_filename=zip_filename)
+
+@app.route('/download/<filename>')
+def download_zip(filename):
+    zip_path = os.path.join('downloads', filename)
+    try:
+        return send_file(zip_path, as_attachment=True)
+    except FileNotFoundError:
+        return "Error: ZIP file not found.", 404
+    finally:
+        # Clean up generated files and ZIP after download
+        try:
+            for file in os.listdir('output'):
+                os.remove(os.path.join('output', file))
+            os.remove(zip_path)
+        except:
+            pass
 
 if __name__ == '__main__':
     app.run(debug=True)
