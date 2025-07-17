@@ -3,311 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sperm Donor Information Form</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Sperm Donor Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Sperm/Semen Donor Information Form</h1>
-        <form action="/generate" method="POST" class="needs-validation" novalidate>
-            <!-- Personal Details -->
+        <h1 class="text-center mb-4">Sperm Donor Information Form</h1>
+        {% if errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <form id="donorForm" action="/generate" method="POST">
             <h3>Personal Details</h3>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="full_name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="full_name" name="full_name" required>
-                    <div class="invalid-feedback">Please enter your full name.</div>
-                </div>
-                <div class="col-md-6">
-                    <label for="date_of_birth" class="form-label">Date of Birth (As per Aadhaar)</label>
-                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
-                    <div class="invalid-feedback">Please enter your date of birth.</div>
-                </div>
+            <div class="mb-3">
+                <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="full_name" name="full_name" value="{{ form_data.full_name | default('') }}" required>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="contact_number" class="form-label">Contact Number</label>
-                    <input type="tel" class="form-control" id="contact_number" name="contact_number" pattern="[0-9]{10}" required>
-                    <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
-                </div>
-                <div class="col-md-6">
-                    <label for="email_address" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="email_address" name="email_address">
-                </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" id="address" name="address">{{ form_data.address | default('') }}</textarea>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="aadhaar_number" class="form-label">Aadhaar Number</label>
-                    <input type="text" class="form-control" id="aadhaar_number" name="aadhaar_number" pattern="[0-9]{12}" required>
-                    <div class="invalid-feedback">Please enter a valid 12-digit Aadhaar number.</div>
-                </div>
-                <div class="col-md-6">
-                    <label for="address" class="form-label">Address</label>
-                    <textarea class="form-control" id="address" name="address" required></textarea>
-                    <div class="invalid-feedback">Please enter your address.</div>
-                </div>
+            <div class="mb-3">
+                <label for="pin_code" class="form-label">PIN Code</label>
+                <input type="text" class="form-control" id="pin_code" name="pin_code" value="{{ form_data.pin_code | default('') }}" pattern="\d{6}" title="PIN Code must be 6 digits">
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="pin_code" class="form-label">Pin Code</label>
-                    <input type="text" class="form-control" id="pin_code" name="pin_code" pattern="[0-9]{6}" required>
-                    <div class="invalid-feedback">Please enter a valid 6-digit pin code.</div>
-                </div>
-                <div class="col-md-6">
-                    <label for="donor_id" class="form-label">Donor ID</label>
-                    <input type="text" class="form-control" id="donor_id" name="donor_id">
-                </div>
+            <div class="mb-3">
+                <label for="contact_number" class="form-label">Contact Number</label>
+                <input type="tel" class="form-control" id="contact_number" name="contact_number" value="{{ form_data.contact_number | default('') }}" pattern="\d{10}" title="Contact Number must be 10 digits">
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="date_of_consultancy" class="form-label">Date of Consultancy</label>
-                    <input type="date" class="form-control" id="date_of_consultancy" name="date_of_consultancy">
-                </div>
-                <div class="col-md-6">
-                    <label for="date_of_discussion" class="form-label">Date of Discussion</label>
-                    <input type="date" class="form-control" id="date_of_discussion" name="date_of_discussion">
-                </div>
+            <div class="mb-3">
+                <label for="aadhaar_number" class="form-label">Aadhaar Number <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="aadhaar_number" name="aadhaar_number" value="{{ form_data.aadhaar_number | default('') }}" pattern="\d{12}" required title="Aadhaar Number must be 12 digits">
+            </div>
+            <div class="mb-3">
+                <label for="date_of_birth" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ form_data.date_of_birth | default('') }}" max="{{ today }}">
+            </div>
+            <div class="mb-3">
+                <label for="email_address" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email_address" name="email_address" value="{{ form_data.email_address | default('') }}">
             </div>
 
-            <!-- Health and Medical History -->
-            <h3 class="mt-4">Health and Medical History</h3>
+            <h3>Consultation Details</h3>
             <div class="mb-3">
-                <label for="genetic_disorders" class="form-label">Any Known Genetic Disorders or Medical Conditions</label>
-                <textarea class="form-control" id="genetic_disorders" name="genetic_disorders"></textarea>
+                <label for="donor_id" class="form-label">Donor ID</label>
+                <input type="text" class="form-control" id="donor_id" name="donor_id" value="{{ form_data.donor_id | default('') }}">
             </div>
             <div class="mb-3">
-                <label for="family_history" class="form-label">Family History of Genetic Conditions</label>
-                <textarea class="form-control" id="family_history" name="family_history"></textarea>
+                <label for="date_of_discussion" class="form-label">Date of Discussion <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="date_of_discussion" name="date_of_discussion" value="{{ form_data.date_of_discussion | default('') }}" required max="{{ today }}">
+            </div>
+            <div class="mb-3">
+                <label for="date_of_consultancy" class="form-label">Date of Consultancy <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="date_of_consultancy" name="date_of_consultancy" value="{{ form_data.date_of_consultancy | default('') }}" required max="{{ today }}">
+            </div>
+
+            <h3>Medical History</h3>
+            <div class="mb-3">
+                <label for="genetic_disorders" class="form-label">Genetic Disorders</label>
+                <textarea class="form-control" id="genetic_disorders" name="genetic_disorders">{{ form_data.genetic_disorders | default('') }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="family_history" class="form-label">Family Medical History</label>
+                <textarea class="form-control" id="family_history" name="family_history">{{ form_data.family_history | default('') }}</textarea>
             </div>
             <div class="mb-3">
                 <label for="current_medications" class="form-label">Current Medications</label>
-                <textarea class="form-control" id="current_medications" name="current_medications"></textarea>
+                <textarea class="form-control" id="current_medications" name="current_medications">{{ form_data.current_medications | default('') }}</textarea>
             </div>
             <div class="mb-3">
                 <label for="allergies" class="form-label">Allergies</label>
-                <textarea class="form-control" id="allergies" name="allergies"></textarea>
+                <textarea class="form-control" id="allergies" name="allergies">{{ form_data.allergies | default('') }}</textarea>
             </div>
             <div class="mb-3">
-                <label for="last_medical_exam" class="form-label">Date of Last Comprehensive Medical Examination</label>
-                <input type="date" class="form-control" id="last_medical_exam" name="last_medical_exam">
+                <label for="last_medical_exam" class="form-label">Date of Last Medical Exam</label>
+                <input type="date" class="form-control" id="last_medical_exam" name="last_medical_exam" value="{{ form_data.last_medical_exam | default('') }}" max="{{ today }}">
             </div>
             <div class="mb-3">
-                <label for="blood_test_results" class="form-label">Results of Recent Blood Test</label>
-                <textarea class="form-control" id="blood_test_results" name="blood_test_results"></textarea>
+                <label class="form-label">Results of Recent Blood Tests</label>
+                <div class="ms-3">
+                    <div class="mb-2">
+                        <label for="hiv_results" class="form-label">HIV (Types 1 and 2)</label>
+                        <select class="form-control" id="hiv_results" name="hiv_results">
+                            <option value="" {% if form_data.hiv_results == '' %}selected{% endif %}>Select</option>
+                            <option value="Negative" {% if form_data.hiv_results == 'Negative' %}selected{% endif %}>Negative</option>
+                            <option value="Positive" {% if form_data.hiv_results == 'Positive' %}selected{% endif %}>Positive</option>
+                            <option value="Pending" {% if form_data.hiv_results == 'Pending' %}selected{% endif %}>Pending</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="hbv_results" class="form-label">Hepatitis B Virus (HBV)</label>
+                        <select class="form-control" id="hbv_results" name="hbv_results">
+                            <option value="" {% if form_data.hbv_results == '' %}selected{% endif %}>Select</option>
+                            <option value="Negative" {% if form_data.hbv_results == 'Negative' %}selected{% endif %}>Negative</option>
+                            <option value="Positive" {% if form_data.hbv_results == 'Positive' %}selected{% endif %}>Positive</option>
+                            <option value="Pending" {% if form_data.hbv_results == 'Pending' %}selected{% endif %}>Pending</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="hcv_results" class="form-label">Hepatitis C Virus (HCV)</label>
+                        <select class="form-control" id="hcv_results" name="hcv_results">
+                            <option value="" {% if form_data.hcv_results == '' %}selected{% endif %}>Select</option>
+                            <option value="Negative" {% if form_data.hcv_results == 'Negative' %}selected{% endif %}>Negative</option>
+                            <option value="Positive" {% if form_data.hcv_results == 'Positive' %}selected{% endif %}>Positive</option>
+                            <option value="Pending" {% if form_data.hcv_results == 'Pending' %}selected{% endif %}>Pending</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="vdrl_results" class="form-label">Treponema pallidum (Syphilis) through VDRL</label>
+                        <select class="form-control" id="vdrl_results" name="vdrl_results">
+                            <option value="" {% if form_data.vdrl_results == '' %}selected{% endif %}>Select</option>
+                            <option value="Negative" {% if form_data.vdrl_results == 'Negative' %}selected{% endif %}>Negative</option>
+                            <option value="Positive" {% if form_data.vdrl_results == 'Positive' %}selected{% endif %}>Positive</option>
+                            <option value="Pending" {% if form_data.vdrl_results == 'Pending' %}selected{% endif %}>Pending</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="mb-3">
-                <label for="serious_illness" class="form-label">Record of Any Serious Illness or Surgeries</label>
-                <textarea class="form-control" id="serious_illness" name="serious_illness"></textarea>
+                <label for="serious_illness" class="form-label">Serious Illnesses or Surgeries</label>
+                <textarea class="form-control" id="serious_illness" name="serious_illness">{{ form_data.serious_illness | default('') }}</textarea>
             </div>
 
-            <!-- Lifestyle and Habits -->
-            <h3 class="mt-4">Lifestyle and Habits</h3>
+            <h3>Lifestyle and Habits</h3>
             <div class="mb-3">
                 <label class="form-label">Smoking Habits</label>
                 <div>
-                    <input type="radio" id="smoking_yes" name="smoking" value="Yes" required>
-                    <label for="smoking_yes" class="me-3">Yes</label>
-                    <input type="radio" id="smoking_no" name="smoking" value="No">
+                    <input type="radio" id="smoking_yes" name="smoking" value="Yes" {% if form_data.smoking == 'Yes' %}checked{% endif %}>
+                    <label for="smoking_yes">Yes</label>
+                    <input type="radio" id="smoking_no" name="smoking" value="No" {% if form_data.smoking == 'No' or not form_data.smoking %}checked{% endif %}>
                     <label for="smoking_no">No</label>
                 </div>
-                <div class="mt-2" id="smoking_details" style="display: none;">
-                    <label for="smoking_frequency" class="form-label">Frequency</label>
-                    <input type="text" class="form-control" id="smoking_frequency" name="smoking_frequency">
-                    <label for="cigarettes_per_day" class="form-label">Number of Cigarettes per Day</label>
-                    <input type="number" class="form-control" id="cigarettes_per_day" name="cigarettes_per_day" min="0">
+                <div id="smoking_details" class="{% if form_data.smoking != 'Yes' %}d-none{% endif %}">
+                    <div class="mb-2">
+                        <label for="smoking_frequency" class="form-label">Frequency</label>
+                        <input type="text" class="form-control" id="smoking_frequency" name="smoking_frequency" value="{{ form_data.smoking_frequency | default('') }}">
+                    </div>
+                    <div class="mb-2">
+                        <label for="cigarettes_per_day" class="form-label">Cigarettes per Day</label>
+                        <input type="number" class="form-control" id="cigarettes_per_day" name="cigarettes_per_day" value="{{ form_data.cigarettes_per_day | default('') }}" min="0">
+                    </div>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Alcohol Consumption</label>
                 <div>
-                    <input type="radio" id="alcohol_yes" name="alcohol" value="Yes" required>
-                    <label for="alcohol_yes" class="me-3">Yes</label>
-                    <input type="radio" id="alcohol_no" name="alcohol" value="No">
+                    <input type="radio" id="alcohol_yes" name="alcohol" value="Yes" {% if form_data.alcohol == 'Yes' %}checked{% endif %}>
+                    <label for="alcohol_yes">Yes</label>
+                    <input type="radio" id="alcohol_no" name="alcohol" value="No" {% if form_data.alcohol == 'No' or not form_data.alcohol %}checked{% endif %}>
                     <label for="alcohol_no">No</label>
                 </div>
-                <div class="mt-2" id="alcohol_details" style="display: none;">
-                    <label for="alcohol_frequency" class="form-label">Frequency</label>
-                    <input type="text" class="form-control" id="alcohol_frequency" name="alcohol_frequency">
-                    <label for="alcohol_amount" class="form-label">Average Amount Consumed</label>
-                    <input type="text" class="form-control" id="alcohol_amount" name="alcohol_amount">
+                <div id="alcohol_details" class="{% if form_data.alcohol != 'Yes' %}d-none{% endif %}">
+                    <div class="mb-2">
+                        <label for="alcohol_frequency" class="form-label">Frequency</label>
+                        <input type="text" class="form-control" id="alcohol_frequency" name="alcohol_frequency" value="{{ form_data.alcohol_frequency | default('') }}">
+                    </div>
+                    <div class="mb-2">
+                        <label for="alcohol_amount" class="form-label">Average Amount</label>
+                        <input type="text" class="form-control" id="alcohol_amount" name="alcohol_amount" value="{{ form_data.alcohol_amount | default('') }}">
+                    </div>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Recreational Drug Use</label>
                 <div>
-                    <input type="radio" id="drug_use_yes" name="drug_use" value="Yes" required>
-                    <label for="drug_use_yes" class="me-3">Yes</label>
-                    <input type="radio" id="drug_use_no" name="drug_use" value="No">
+                    <input type="radio" id="drug_use_yes" name="drug_use" value="Yes" {% if form_data.drug_use == 'Yes' %}checked{% endif %}>
+                    <label for="drug_use_yes">Yes</label>
+                    <input type="radio" id="drug_use_no" name="drug_use" value="No" {% if form_data.drug_use == 'No' or not form_data.drug_use %}checked{% endif %}>
                     <label for="drug_use_no">No</label>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Dietary Preferences</label>
                 <div>
-                    <input type="radio" id="diet_veg" name="diet" value="Vegetarian" required>
-                    <label for="diet_veg" class="me-3">Vegetarian</label>
-                    <input type="radio" id="diet_nonveg" name="diet" value="Non-Vegetarian">
+                    <input type="radio" id="diet_veg" name="diet" value="Vegetarian" {% if form_data.diet == 'Vegetarian' %}checked{% endif %}>
+                    <label for="diet_veg">Vegetarian</label>
+                    <input type="radio" id="diet_nonveg" name="diet" value="Non-Vegetarian" {% if form_data.diet == 'Non-Vegetarian' %}checked{% endif %}>
                     <label for="diet_nonveg">Non-Vegetarian</label>
+                    <input type="radio" id="diet_vegan" name="diet" value="Vegan" {% if form_data.diet == 'Vegan' %}checked{% endif %}>
+                    <label for="diet_vegan">Vegan</label>
+                    <input type="radio" id="diet_other" name="diet" value="Other" {% if form_data.diet == 'Other' or not form_data.diet %}checked{% endif %}>
+                    <label for="diet_other">Other</label>
                 </div>
             </div>
 
-            <!-- Reproductive History -->
-            <h3 class="mt-4">Reproductive History</h3>
+            <h3>Reproductive History</h3>
             <div class="mb-3">
                 <label class="form-label">Marital Status</label>
                 <div>
-                    <input type="radio" id="marital_married" name="marital_status" value="Married" required>
-                    <label for="marital_married" class="me-3">Married</label>
-                    <input type="radio" id="marital_unmarried" name="marital_status" value="Un-Married">
-                    <label for="marital_unmarried">Un-Married</label>
+                    <input type="radio" id="marital_single" name="marital_status" value="Single" {% if form_data.marital_status == 'Single' %}checked{% endif %}>
+                    <label for="marital_single">Single</label>
+                    <input type="radio" id="marital_married" name="marital_status" value="Married" {% if form_data.marital_status == 'Married' %}checked{% endif %}>
+                    <label for="marital_married">Married</label>
+                    <input type="radio" id="marital_divorced" name="marital_status" value="Divorced" {% if form_data.marital_status == 'Divorced' %}checked{% endif %}>
+                    <label for="marital_divorced">Divorced</label>
                 </div>
             </div>
             <div class="mb-3">
                 <label for="num_children" class="form-label">Number of Biological Children</label>
-                <input type="number" class="form-control" id="num_children" name="num_children" min="0">
-                <div id="children_details" class="mt-2"></div>
+                <input type="number" class="form-control" id="num_children" name="num_children" min="0" max="20" value="{{ form_data.num_children | default('0') }}">
             </div>
+            <div id="children_ages" class="ms-3"></div>
             <div class="mb-3">
                 <label class="form-label">Previous Donor Experience</label>
                 <div>
-                    <input type="radio" id="donor_exp_yes" name="donor_experience" value="Yes" required>
-                    <label for="donor_exp_yes" class="me-3">Yes</label>
-                    <input type="radio" id="donor_exp_no" name="donor_experience" value="No">
-                    <label for="donor_exp_no">No</label>
+                    <input type="radio" id="donor_experience_yes" name="donor_experience" value="Yes" {% if form_data.donor_experience == 'Yes' %}checked{% endif %}>
+                    <label for="donor_experience_yes">Yes</label>
+                    <input type="radio" id="donor_experience_no" name="donor_experience" value="No" {% if form_data.donor_experience == 'No' or not form_data.donor_experience %}checked{% endif %}>
+                    <label for="donor_experience_no">No</label>
                 </div>
             </div>
             <div class="mb-3">
-                <label for="donation_frequency" class="form-label">Frequency of Donations (if applicable)</label>
-                <input type="text" class="form-control" id="donation_frequency" name="donation_frequency">
+                <label for="donation_frequency" class="form-label">Frequency of Donations</label>
+                <input type="text" class="form-control" id="donation_frequency" name="donation_frequency" value="{{ form_data.donation_frequency | default('') }}">
             </div>
 
-            <!-- Physical Attributes -->
-            <h3 class="mt-4">Physical Attributes</h3>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="height" class="form-label">Height</label>
-                    <input type="text" class="form-control" id="height" name="height" required>
-                    <div class="invalid-feedback">Please enter your height.</div>
-                </div>
-                <div class="col-md-6">
-                    <label for="weight" class="form-label">Weight</label>
-                    <input type="text" class="form-control" id="weight" name="weight" required>
-                    <div class="invalid-feedback">Please enter your weight.</div>
-                </div>
+            <h3>Physical Attributes</h3>
+            <div class="mb-3">
+                <label for="height" class="form-label">Height</label>
+                <input type="text" class="form-control" id="height" name="height" value="{{ form_data.height | default('') }}" pattern="\d+(\.\d+)? (cm|ft)" title="Height must be in format 'number cm' or 'number ft'">
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="education" class="form-label">Educational Qualifications</label>
-                    <input type="text" class="form-control" id="education" name="education" required>
-                    <div class="invalid-feedback">Please enter your educational qualifications.</div>
-                </div>
-                <div class="col-md-6">
-                    <label for="mother_tongue" class="form-label">Mother Tongue</label>
-                    <input type="text" class="form-control" id="mother_tongue" name="mother_tongue" required>
-                    <div class="invalid-feedback">Please enter your mother tongue.</div>
-                </div>
+            <div class="mb-3">
+                <label for="weight" class="form-label">Weight</label>
+                <input type="text" class="form-control" id="weight" name="weight" value="{{ form_data.weight | default('') }}" pattern="\d+(\.\d+)? (kg|lbs)" title="Weight must be in format 'number kg' or 'number lbs'">
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="skin_colour" class="form-label">Skin Colour</label>
-                    <input type="text" class="form-control" id="skin_colour" name="skin_colour" required>
-                    <div class="invalid-feedback">Please enter your skin colour.</div>
-                </div>
-                <div class="col-md-6">
-                    <label for="hair_colour" class="form-label">Hair Colour</label>
-                    <input type="text" class="form-control" id="hair_colour" name="hair_colour" required>
-                    <div class="invalid-feedback">Please enter your hair colour.</div>
-                </div>
+            <div class="mb-3">
+                <label for="education" class="form-label">Educational Qualifications</label>
+                <input type="text" class="form-control" id="education" name="education" value="{{ form_data.education | default('') }}">
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="eye_colour" class="form-label">Eye Colour</label>
-                    <input type="text" class="form-control" id="eye_colour" name="eye_colour" required>
-                    <div class="invalid-feedback">Please enter your eye colour.</div>
-                </div>
-                <div class="col-md-6">
-                    <label for="religion" class="form-label">Religion</label>
-                    <input type="text" class="form-control" id="religion" name="religion" required>
-                    <div class="invalid-feedback">Please enter your religion.</div>
-                </div>
+            <div class="mb-3">
+                <label for="mother_tongue" class="form-label">Mother Tongue</label>
+                <input type="text" class="form-control" id="mother_tongue" name="mother_tongue" value="{{ form_data.mother_tongue | default('') }}">
+            </div>
+            <div class="mb-3">
+                <label for="skin_colour" class="form-label">Skin Colour</label>
+                <input type="text" class="form-control" id="skin_colour" name="skin_colour" value="{{ form_data.skin_colour | default('') }}">
+            </div>
+            <div class="mb-3">
+                <label for="hair_colour" class="form-label">Hair Colour</label>
+                <input type="text" class="form-control" id="hair_colour" name="hair_colour" value="{{ form_data.hair_colour | default('') }}">
+            </div>
+            <div class="mb-3">
+                <label for="eye_colour" class="form-label">Eye Colour</label>
+                <input type="text" class="form-control" id="eye_colour" name="eye_colour" value="{{ form_data.eye_colour | default('') }}">
+            </div>
+            <div class="mb-3">
+                <label for="religion" class="form-label">Religion</label>
+                <input type="text" class="form-control" id="religion" name="religion" value="{{ form_data.religion | default('') }}">
             </div>
             <div class="mb-3">
                 <label for="occupation" class="form-label">Occupation</label>
-                <input type="text" class="form-control" id="occupation" name="occupation" required>
-                <div class="invalid-feedback">Please enter your occupation.</div>
+                <input type="text" class="form-control" id="occupation" name="occupation" value="{{ form_data.occupation | default('') }}">
             </div>
 
-            <!-- Consent Fields -->
-            <h3 class="mt-4">Consent</h3>
+            <h3>Consent</h3>
             <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="consent_cryopreservation" name="consent_cryopreservation" required>
-                <label class="form-check-label" for="consent_cryopreservation">Consent for Cryopreservation of Sperm</label>
-                <div class="invalid-feedback">Please provide consent for cryopreservation.</div>
+                <input type="checkbox" class="form-check-input" id="consent_cryopreservation" name="consent_cryopreservation" {% if form_data.consent_cryopreservation == 'Yes' %}checked{% endif %}>
+                <label class="form-check-label" for="consent_cryopreservation">Consent for cryopreservation of sperm</label>
             </div>
             <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="consent_art_bank" name="consent_art_bank" required>
-                <label class="form-check-label" for="consent_art_bank">Consent for the Use of Sperm by ART Bank</label>
-                <div class="invalid-feedback">Please provide consent for ART Bank usage.</div>
+                <input type="checkbox" class="form-check-input" id="consent_art_bank" name="consent_art_bank" {% if form_data.consent_art_bank == 'Yes' %}checked{% endif %}>
+                <label class="form-check-label" for="consent_art_bank">Consent for use of sperm by ART Bank</label>
             </div>
             <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="consent_registry" name="consent_registry" required>
-                <label class="form-check-label" for="consent_registry">Consent to Update Donor Information in the National Registry</label>
-                <div class="invalid-feedback">Please provide consent for updating the National Registry.</div>
+                <input type="checkbox" class="form-check-input" id="consent_registry" name="consent_registry" {% if form_data.consent_registry == 'Yes' %}checked{% endif %}>
+                <label class="form-check-label" for="consent_registry">Consent to update donor information in National Registry</label>
             </div>
 
-            <!-- Submit Button -->
             <div class="text-center">
-                <button type="submit" class="btn btn-primary">Generate Document</button>
+                <button type="submit" class="btn btn-primary">Generate Documents</button>
             </div>
         </form>
     </div>
-
-    <!-- Bootstrap JS and Custom Script -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Bootstrap form validation
-        (function () {
-            'use strict';
-            const forms = document.querySelectorAll('.needs-validation');
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        })();
+        document.addEventListener('DOMContentLoaded', () => {
+            const numChildrenInput = document.getElementById('num_children');
+            const childrenAgesDiv = document.getElementById('children_ages');
+            const smokingRadios = document.getElementsByName('smoking');
+            const alcoholRadios = document.getElementsByName('alcohol');
+            const smokingDetails = document.getElementById('smoking_details');
+            const alcoholDetails = document.getElementById('alcohol_details');
+            const form = document.getElementById('donorForm');
 
-        // Show/hide smoking details
-        document.querySelectorAll('input[name="smoking"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                document.getElementById('smoking_details').style.display = this.value === 'Yes' ? 'block' : 'none';
-            });
-        });
-
-        // Show/hide alcohol details
-        document.querySelectorAll('input[name="alcohol"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                document.getElementById('alcohol_details').style.display = this.value === 'Yes' ? 'block' : 'none';
-            });
-        });
-
-        // Dynamic children fields
-        document.getElementById('num_children').addEventListener('change', function () {
-            const num = parseInt(this.value) || 0;
-            const container = document.getElementById('children_details');
-            container.innerHTML = '';
-            for (let i = 1; i <= num; i++) {
-                container.innerHTML += `
-                    <div class="mb-3">
+            function updateChildrenFields() {
+                const num = parseInt(numChildrenInput.value) || 0;
+                childrenAgesDiv.innerHTML = '';
+                if (num > 20) {
+                    alert('Number of children cannot exceed 20.');
+                    numChildrenInput.value = 20;
+                    return;
+                }
+                for (let i = 1; i <= num; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'mb-2';
+                    div.innerHTML = `
                         <label for="child_${i}_age" class="form-label">Child ${i} Age</label>
-                        <input type="number" class="form-control" id="child_${i}_age" name="child_${i}_age" min="0">
-                    </div>
-                `;
+                        <input type="number" class="form-control" id="child_${i}_age" name="child_${i}_age" value="${document.querySelector(`input[name=child_${i}_age]`)?.value || ''}" min="0" max="100" title="Age must be between 0 and 100">
+                    `;
+                    childrenAgesDiv.appendChild(div);
+                }
             }
+
+            function updateSmokingDetails() {
+                smokingDetails.classList.toggle('d-none', !document.getElementById('smoking_yes').checked);
+            }
+
+            function updateAlcoholDetails() {
+                alcoholDetails.classList.toggle('d-none', !document.getElementById('alcohol_yes').checked);
+            }
+
+            function validateForm(event) {
+                const errors = [];
+                if (!form.full_name.value) errors.push('Full Name is required.');
+                if (!form.aadhaar_number.value) errors.push('Aadhaar Number is required.');
+                if (!form.date_of_discussion.value) errors.push('Date of Discussion is required.');
+                if (!form.date_of_consultancy.value) errors.push('Date of Consultancy is required.');
+                if (form.aadhaar_number.value && !/^\d{12}$/.test(form.aadhaar_number.value)) errors.push('Aadhaar Number must be 12 digits.');
+                if (form.contact_number.value && !/^\d{10}$/.test(form.contact_number.value)) errors.push('Contact Number must be 10 digits.');
+                if (form.pin_code.value && !/^\d{6}$/.test(form.pin_code.value)) errors.push('PIN Code must be 6 digits.');
+                if (form.email_address.value && !/^[\w\.-]+@[\w\.-]+\.\w+$/.test(form.email_address.value)) errors.push('Invalid email address.');
+                if (form.num_children.value && (parseInt(form.num_children.value) < 0 || parseInt(form.num_children.value) > 20)) errors.push('Number of children must be between 0 and 20.');
+                if (form.smoking_yes.checked && (!form.smoking_frequency.value || !form.cigarettes_per_day.value)) errors.push('Smoking Frequency and Cigarettes per Day are required if smoking is Yes.');
+                if (form.alcohol_yes.checked && (!form.alcohol_frequency.value || !form.alcohol_amount.value)) errors.push('Alcohol Frequency and Amount are required if alcohol consumption is Yes.');
+
+                const today = new Date().toISOString().split('T')[0];
+                ['date_of_birth', 'last_medical_exam', 'date_of_discussion', 'date_of_consultancy'].forEach(field => {
+                    if (form[field].value && form[field].value > today) {
+                        errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} cannot be in the future.`);
+                    }
+                });
+
+                if (errors.length > 0) {
+                    event.preventDefault();
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger';
+                    alertDiv.innerHTML = `<ul>${errors.map(e => `<li>${e}</li>`).join('')}</ul>`;
+                    form.prepend(alertDiv);
+                    setTimeout(() => alertDiv.remove(), 5000);
+                }
+            }
+
+            numChildrenInput.addEventListener('input', updateChildrenFields);
+            smokingRadios.forEach(radio => radio.addEventListener('change', updateSmokingDetails));
+            alcoholRadios.forEach(radio => radio.addEventListener('change', updateAlcoholDetails));
+            form.addEventListener('submit', validateForm);
+
+            // Initialize fields
+            updateChildrenFields();
+            updateSmokingDetails();
+            updateAlcoholDetails();
         });
     </script>
 </body>
