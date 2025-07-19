@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('oocyteDonorForm');
-    if (!form) return;
+    if (!form) {
+        console.error('Form with ID oocyteDonorForm not found.');
+        return;
+    }
 
     const numChildrenInput = document.getElementById('num_children');
     const childrenAgesDiv = document.getElementById('children_ages');
@@ -22,12 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update progress bar
     function updateProgressBar() {
-        const totalFields = form.querySelectorAll('input, select, textarea').length;
-        const filledFields = Array.from(form.querySelectorAll('input, select, textarea')).filter(field => field.value.trim() !== '').length;
+        const totalFields = form.querySelectorAll('input:not([type="submit"]), select, textarea').length;
+        const filledFields = Array.from(form.querySelectorAll('input:not([type="submit"]), select, textarea')).filter(field => {
+            if (field.type === 'radio' || field.type === 'checkbox') {
+                return field.checked;
+            }
+            return field.value.trim() !== '';
+        }).length;
         const progress = (filledFields / totalFields) * 100;
         const progressBar = document.getElementById('progressBar');
-        progressBar.style.width = `${progress}%`;
-        progressBar.setAttribute('aria-valuenow', progress);
+        if (progressBar) {
+            progressBar.style.width = `${progress}%`;
+            progressBar.setAttribute('aria-valuenow', progress);
+        }
     }
 
     // Update children fields
@@ -81,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTobaccoDetails();
     updateAlcoholDetails();
     updateChildrenFields();
+    updateProgressBar();
 
     // Event listeners
     if (numChildrenInput) {
@@ -101,58 +112,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Required fields
         ['full_name', 'aadhaar_number', 'date_of_discussion', 'date_of_consultancy', 'ivf_name', 'doctor_name'].forEach(field => {
-            if (!form[field].value) errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} is required.`);
+            const element = form[field];
+            if (!element || !element.value.trim()) {
+                errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} is required.`);
+            }
         });
 
         // Pattern validations
-        if (form.aadhaar_number.value && !/^\d{12}$/.test(form.aadhaar_number.value)) {
+        if (form.aadhaar_number?.value && !/^\d{12}$/.test(form.aadhaar_number.value)) {
             errors.push('Aadhaar Number must be 12 digits.');
         }
-        if (form.contact_number.value && !/^\d{10}$/.test(form.contact_number.value)) {
+        if (form.contact_number?.value && !/^\d{10}$/.test(form.contact_number.value)) {
             errors.push('Contact Number must be 10 digits.');
         }
-        if (form.pin_code.value && !/^\d{6}$/.test(form.pin_code.value)) {
+        if (form.pin_code?.value && !/^\d{6}$/.test(form.pin_code.value)) {
             errors.push('PIN Code must be 6 digits.');
         }
-        if (form.email_address.value && !/^[\w\.-]+@[\w\.-]+\.\w+$/.test(form.email_address.value)) {
+        if (form.email_address?.value && !/^[\w\.-]+@[\w\.-]+\.\w+$/.test(form.email_address.value)) {
             errors.push('Invalid email address.');
+        }
+        if (form.height?.value && !/^\d+(\.\d+)? (cm|ft)$/.test(form.height.value)) {
+            errors.push('Height must be in format "number cm" or "number ft".');
+        }
+        if (form.weight?.value && !/^\d+(\.\d+)? (kg|lbs)$/.test(form.weight.value)) {
+            errors.push('Weight must be in format "number kg" or "number lbs".');
         }
 
         // Number range validations
-        if (form.age.value && (parseInt(form.age.value) < 18 || parseInt(form.age.value) > 100)) {
+        if (form.age?.value && (parseInt(form.age.value) < 18 || parseInt(form.age.value) > 100)) {
             errors.push('Age must be between 18 and 100.');
         }
-        if (form.num_children.value && (parseInt(form.num_children.value) < 0 || parseInt(form.num_children.value) > 20)) {
+        if (form.num_children?.value && (parseInt(form.num_children.value) < 0 || parseInt(form.num_children.value) > 20)) {
             errors.push('Number of children must be between 0 and 20.');
         }
-        if (form.tobacco_use_yes?.checked && !form.tobacco_frequency.value) {
+        if (form.tobacco_use_yes?.checked && !form.tobacco_frequency?.value.trim()) {
             errors.push('Tobacco Frequency is required if tobacco use is Yes.');
         }
-        if (form.alcohol_yes?.checked && !form.alcohol_frequency.value) {
+        if (form.alcohol_yes?.checked && !form.alcohol_frequency?.value.trim()) {
             errors.push('Alcohol Frequency is required if alcohol consumption is Yes.');
         }
         ['antral_follicle_count', 'fsh_levels', 'amh_levels'].forEach(field => {
-            if (form[field].value && (isNaN(form[field].value) || parseFloat(form[field].value) < 0)) {
+            if (form[field]?.value && (isNaN(form[field].value) || parseFloat(form[field].value) < 0)) {
                 errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} must be a non-negative number.`);
             }
         });
 
         // Date validations
         ['date_of_birth', 'last_medical_exam', 'date_of_discussion', 'date_of_consultancy'].forEach(field => {
-            if (form[field].value && form[field].value > today) {
+            if (form[field]?.value && form[field].value > today) {
                 errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} cannot be in the future.`);
             }
         });
 
         // Blood test result validations
         ['hiv_results', 'hbv_results', 'hcv_results', 'vdrl_results'].forEach(field => {
-            if (form[field].value && !['Negative', 'Positive', 'Pending', ''].includes(form[field].value)) {
+            if (form[field]?.value && !['Negative', 'Positive', 'Pending', ''].includes(form[field].value)) {
                 errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} must be 'Negative', 'Positive', or 'Pending'.`);
             }
         });
 
         // Child age validations
-        const numChildren = parseInt(form.num_children.value) || 0;
+        const numChildren = parseInt(form.num_children?.value) || 0;
         for (let i = 1; i <= numChildren; i++) {
             const ageInput = document.querySelector(`input[name=child_${i}_age]`);
             if (ageInput && ageInput.value) {
@@ -167,6 +187,8 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             errorList.innerHTML = errors.map(error => `<li>${error}</li>`).join('');
             errorModal.show();
+        } else {
+            console.log('Form validation passed, submitting...');
         }
     });
 });

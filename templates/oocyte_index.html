@@ -35,14 +35,6 @@
                                 <textarea class="form-control" id="address" name="address" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your residential address">{{ form_data.address | default('') }}</textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="district" class="form-label">District</label>
-                                <input type="text" class="form-control" id="district" name="district" value="{{ form_data.district | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your district">
-                            </div>
-                            <div class="mb-3">
-                                <label for="state" class="form-label">State</label>
-                                <input type="text" class="form-control" id="state" name="state" value="{{ form_data.state | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your state">
-                            </div>
-                            <div class="mb-3">
                                 <label for="pin_code" class="form-label">PIN Code</label>
                                 <input type="text" class="form-control" id="pin_code" name="pin_code" value="{{ form_data.pin_code | default('') }}" pattern="\d{6}" title="PIN Code must be 6 digits" data-bs-toggle="tooltip" data-bs-placement="right">
                             </div>
@@ -96,25 +88,13 @@
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="donorDetails">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDonor" aria-expanded="false" aria-controls="collapseDonor">
-                            Oocyte Donor Details
+                    <h2 class="accordion-header" id="consultationDetails">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConsultation" aria-expanded="false" aria-controls="collapseConsultation">
+                            Consultation Details
                         </button>
                     </h2>
-                    <div id="collapseDonor" class="accordion-collapse collapse" aria-labelledby="donorDetails">
+                    <div id="collapseConsultation" class="accordion-collapse collapse" aria-labelledby="consultationDetails">
                         <div class="accordion-body">
-                            <div class="mb-3">
-                                <label for="donor_id" class="form-label">Donor ID</label>
-                                <input type="text" class="form-control" id="donor_id" name="donor_id" value="{{ form_data.donor_id | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your donor ID if applicable">
-                            </div>
-                            <div class="mb-3">
-                                <label for="date_of_discussion" class="form-label">Date of Discussion <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="date_of_discussion" name="date_of_discussion" value="{{ form_data.date_of_discussion | default('') }}" required max="{{ today }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Select date of discussion with doctor">
-                            </div>
-                            <div class="mb-3">
-                                <label for="date_of_consultancy" class="form-label">Date of Consultancy <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="date_of_consultancy" name="date_of_consultancy" value="{{ form_data.date_of_consultancy | default('') }}" required max="{{ today }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Select date of consultancy">
-                            </div>
                             <div class="mb-3">
                                 <label for="ivf_name" class="form-label">IVF Clinic Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="ivf_name" name="ivf_name" value="{{ form_data.ivf_name | default('') }}" required data-bs-toggle="tooltip" data-bs-placement="right" title="Enter the IVF clinic name">
@@ -125,22 +105,39 @@
                             </div>
                             <div class="mb-3">
                                 <label for="doctor_name" class="form-label">Doctor Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="doctor_name" name="doctor_name" value="{{ form_data.doctor_name | default('') }}" required data-bs-toggle="tooltip" data-bs-placement="right" title="Enter the doctor's name">
+                                <input type="text" class="form-control" id="doctor_name" name="doctor_name" value="{{ form_data.doctor_name | default('') }}" required data-bs-toggle="tooltip" data-bs-placement="right" title="Enter the consulting doctor's name">
                             </div>
                             <div class="mb-3">
-                                <label for="place" class="form-label">Place</label>
-                                <input type="text" class="form-control" id="place" name="place" value="{{ form_data.place | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter the place of consultation">
+                                <label for="date_of_discussion" class="form-label">Date of Discussion <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date_of_discussion" name="date_of_discussion" value="{{ form_data.date_of_discussion | default('') }}" required max="{{ today }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Select date of discussion with doctor">
+                            </div>
+                            <div class="mb-3">
+                                <label for="date_of_consultancy" class="form-label">Date of Consultancy <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date_of_consultancy" name="date_of_consultancy" value="{{ form_data.date_of_consultancy | default('') }}" required max="{{ today }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Select date of consultancy">
+                            </div>
+                            <div class="mb-3">
+                                <label for="donor_experience" class="form-label">Previous Donor Experience</label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check">
+                                        <input type="radio" id="donor_experience_yes" name="donor_experience" value="Yes" {% if form_data.donor_experience == 'Yes' %}checked{% endif %} class="form-check-input">
+                                        <label for="donor_experience_yes" class="form-check-label">Yes</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" id="donor_experience_no" name="donor_experience" value="No" {% if form_data.donor_experience == 'No' or not form_data.donor_experience %}checked{% endif %} class="form-check-input">
+                                        <label for="donor_experience_no" class="form-check-label">No</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="medicalScreening">
+                    <h2 class="accordion-header" id="medicalHistory">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMedical" aria-expanded="false" aria-controls="collapseMedical">
-                            Medical and Genetic Screening
+                            Medical History
                         </button>
                     </h2>
-                    <div id="collapseMedical" class="accordion-collapse collapse" aria-labelledby="medicalScreening">
+                    <div id="collapseMedical" class="accordion-collapse collapse" aria-labelledby="medicalHistory">
                         <div class="accordion-body">
                             <div class="mb-3">
                                 <label for="last_medical_exam" class="form-label">Date of Last Medical Exam</label>
@@ -188,6 +185,22 @@
                                 </div>
                             </div>
                             <div class="mb-3">
+                                <label for="antral_follicle_count" class="form-label">Antral Follicle Count</label>
+                                <input type="number" class="form-control" id="antral_follicle_count" name="antral_follicle_count" value="{{ form_data.antral_follicle_count | default('') }}" min="0" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter antral follicle count">
+                            </div>
+                            <div class="mb-3">
+                                <label for="fsh_levels" class="form-label">FSH Levels</label>
+                                <input type="number" class="form-control" id="fsh_levels" name="fsh_levels" value="{{ form_data.fsh_levels | default('') }}" min="0" step="0.1" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter FSH levels in mIU/mL">
+                            </div>
+                            <div class="mb-3">
+                                <label for="amh_levels" class="form-label">AMH Levels</label>
+                                <input type="number" class="form-control" id="amh_levels" name="amh_levels" value="{{ form_data.amh_levels | default('') }}" min="0" step="0.1" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter AMH levels in ng/mL">
+                            </div>
+                            <div class="mb-3">
+                                <label for="genetic_disorders" class="form-label">Genetic Disorders</label>
+                                <textarea class="form-control" id="genetic_disorders" name="genetic_disorders" data-bs-toggle="tooltip" data-bs-placement="right" title="List any known genetic disorders">{{ form_data.genetic_disorders | default('') }}</textarea>
+                            </div>
+                            <div class="mb-3">
                                 <label for="family_history" class="form-label">Family Medical History</label>
                                 <textarea class="form-control" id="family_history" name="family_history" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe family medical history">{{ form_data.family_history | default('') }}</textarea>
                             </div>
@@ -207,35 +220,12 @@
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="ovarianReserve">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOvarian" aria-expanded="false" aria-controls="collapseOvarian">
-                            Ovarian Reserve Assessment
-                        </button>
-                    </h2>
-                    <div id="collapseOvarian" class="accordion-collapse collapse" aria-labelledby="ovarianReserve">
-                        <div class="accordion-body">
-                            <div class="mb-3">
-                                <label for="antral_follicle_count" class="form-label">Antral Follicle Count (AFC)</label>
-                                <input type="text" class="form-control" id="antral_follicle_count" name="antral_follicle_count" value="{{ form_data.antral_follicle_count | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter antral follicle count">
-                            </div>
-                            <div class="mb-3">
-                                <label for="fsh_levels" class="form-label">FSH Levels</label>
-                                <input type="text" class="form-control" id="fsh_levels" name="fsh_levels" value="{{ form_data.fsh_levels | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter FSH levels">
-                            </div>
-                            <div class="mb-3">
-                                <label for="amh_levels" class="form-label">AMH Levels</label>
-                                <input type="text" class="form-control" id="amh_levels" name="amh_levels" value="{{ form_data.amh_levels | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter AMH levels">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="lifestyleHealth">
+                    <h2 class="accordion-header" id="lifestyleHabits">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLifestyle" aria-expanded="false" aria-controls="collapseLifestyle">
-                            Lifestyle and Health Assessment
+                            Lifestyle and Habits
                         </button>
                     </h2>
-                    <div id="collapseLifestyle" class="accordion-collapse collapse" aria-labelledby="lifestyleHealth">
+                    <div id="collapseLifestyle" class="accordion-collapse collapse" aria-labelledby="lifestyleHabits">
                         <div class="accordion-body">
                             <div class="mb-3">
                                 <label class="form-label">Tobacco Use</label>
@@ -289,8 +279,72 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="exercise_routine" class="form-label">Exercise Routine</label>
-                                <textarea class="form-control" id="exercise_routine" name="exercise_routine" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe your exercise routine">{{ form_data.exercise_routine | default('') }}</textarea>
+                                <label class="form-label">Dietary Preferences</label>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check">
+                                        <input type="radio" id="diet_veg" name="diet" value="Vegetarian" {% if form_data.diet == 'Vegetarian' %}checked{% endif %} class="form-check-input">
+                                        <label for="diet_veg" class="form-check-label">Vegetarian</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" id="diet_nonveg" name="diet" value="Non-Vegetarian" {% if form_data.diet == 'Non-Vegetarian' %}checked{% endif %} class="form-check-input">
+                                        <label for="diet_nonveg" class="form-check-label">Non-Vegetarian</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" id="diet_vegan" name="diet" value="Vegan" {% if form_data.diet == 'Vegan' %}checked{% endif %} class="form-check-input">
+                                        <label for="diet_vegan" class="form-check-label">Vegan</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" id="diet_other" name="diet" value="Other" {% if form_data.diet == 'Other' or not form_data.diet %}checked{% endif %} class="form-check-input">
+                                        <label for="diet_other" class="form-check-label">Other</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="physicalAttributes">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePhysical" aria-expanded="false" aria-controls="collapsePhysical">
+                            Physical Attributes
+                        </button>
+                    </h2>
+                    <div id="collapsePhysical" class="accordion-collapse collapse" aria-labelledby="physicalAttributes">
+                        <div class="accordion-body">
+                            <div class="mb-3">
+                                <label for="height" class="form-label">Height</label>
+                                <input type="text" class="form-control" id="height" name="height" value="{{ form_data.height | default('') }}" pattern="\d+(\.\d+)? (cm|ft)" title="Height must be in format 'number cm' or 'number ft'" data-bs-toggle="tooltip" data-bs-placement="right">
+                            </div>
+                            <div class="mb-3">
+                                <label for="weight" class="form-label">Weight</label>
+                                <input type="text" class="form-control" id="weight" name="weight" value="{{ form_data.weight | default('') }}" pattern="\d+(\.\d+)? (kg|lbs)" title="Weight must be in format 'number kg' or 'number lbs'" data-bs-toggle="tooltip" data-bs-placement="right">
+                            </div>
+                            <div class="mb-3">
+                                <label for="education" class="form-label">Educational Qualifications</label>
+                                <input type="text" class="form-control" id="education" name="education" value="{{ form_data.education | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your educational qualifications">
+                            </div>
+                            <div class="mb-3">
+                                <label for="mother_tongue" class="form-label">Mother Tongue</label>
+                                <input type="text" class="form-control" id="mother_tongue" name="mother_tongue" value="{{ form_data.mother_tongue | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your mother tongue">
+                            </div>
+                            <div class="mb-3">
+                                <label for="skin_colour" class="form-label">Skin Colour</label>
+                                <input type="text" class="form-control" id="skin_colour" name="skin_colour" value="{{ form_data.skin_colour | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe your skin colour">
+                            </div>
+                            <div class="mb-3">
+                                <label for="hair_colour" class="form-label">Hair Colour</label>
+                                <input type="text" class="form-control" id="hair_colour" name="hair_colour" value="{{ form_data.hair_colour | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe your hair colour">
+                            </div>
+                            <div class="mb-3">
+                                <label for="eye_colour" class="form-label">Eye Colour</label>
+                                <input type="text" class="form-control" id="eye_colour" name="eye_colour" value="{{ form_data.eye_colour | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe your eye colour">
+                            </div>
+                            <div class="mb-3">
+                                <label for="religion" class="form-label">Religion</label>
+                                <input type="text" class="form-control" id="religion" name="religion" value="{{ form_data.religion | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your religion">
+                            </div>
+                            <div class="mb-3">
+                                <label for="occupation" class="form-label">Occupation</label>
+                                <input type="text" class="form-control" id="occupation" name="occupation" value="{{ form_data.occupation | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your occupation">
                             </div>
                         </div>
                     </div>
@@ -303,6 +357,18 @@
                     </h2>
                     <div id="collapseConsent" class="accordion-collapse collapse" aria-labelledby="consentDetails">
                         <div class="accordion-body">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" id="consent_cryopreservation" name="consent_cryopreservation" {% if form_data.consent_cryopreservation == 'Yes' %}checked{% endif %} class="form-check-input">
+                                    <label for="consent_cryopreservation" class="form-check-label">Consent for Cryopreservation of Oocytes</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" id="consent_art_bank" name="consent_art_bank" {% if form_data.consent_art_bank == 'Yes' %}checked{% endif %} class="form-check-input">
+                                    <label for="consent_art_bank" class="form-check-label">Consent for Use of Oocytes by ART Bank</label>
+                                </div>
+                            </div>
                             <div class="mb-3">
                                 <div class="form-check">
                                     <input type="checkbox" id="consent_registry" name="consent_registry" {% if form_data.consent_registry == 'Yes' %}checked{% endif %} class="form-check-input">
