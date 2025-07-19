@@ -1,92 +1,66 @@
-Sperm Donor Document Generator
-This Flask application generates three Word documents (form_15.docx, medical_history.docx, donor_info.docx) based on user input for sperm donor registration, compliant with the ART Regulation Act, 2021. It features dynamic document generation, robust input validation, and a user-friendly interface.
-Features
+# ART Document Generator
 
-Dynamic Document Generation: Fills templates with user data, including separate blood test fields (HIV, HBV, HCV, VDRL) and dynamic children fields.
-Input Validation: Client- and server-side validation for required fields, formats (e.g., Aadhaar, email), and logical constraints (e.g., dates not in future).
-UI/UX: Bootstrap-based interface with collapsible sections, responsive design, and clear error feedback.
-Error Handling: Logs errors to logs/app.log, handles template/file errors, and includes rate limiting.
-Deployment-Ready: Configured for Heroku with Gunicorn.
+A **Flask-based web application** for generating documents for **Assisted Reproductive Technology (ART)** processes, including structured, validated forms for **sperm donors, oocyte donors, and commissioning couples**.
 
-Project Structure
-doc_generator/
-├── templates/                  # HTML templates
-│   ├── index.html             # Input form
-│   ├── success.html           # Success page
-│   ├── error.html             # Error page
-├── templates_docx/            # Word document templates
-│   ├── form_15.docx
-│   ├── medical_history.docx
-│   └── donor_info.docx
-├── output/                    # Generated .docx files
-├── downloads/                 # ZIP archives
-├── logs/                      # Error logs
-├── static/                    # CSS and JS
-│   ├── styles.css
-│   └── scripts.js
-├── .gitignore
-├── requirements.txt
-├── create_templates.py        # Generates .docx templates
-├── app.py                     # Flask application
-├── Procfile                   # Heroku process file
-├── README.md
+---
 
-Setup Instructions
+## Features
 
-Clone the Repository:
-git clone <repository-url>
-cd doc_generator
+* Structured forms with **accordion layout** for organized data entry.
+* **Input validation** and error handling for accurate data capture.
+* **Progress tracking** to visualize form completion.
+* **Responsive design** for desktop and mobile.
+* **Dynamic field generation** for specific inputs.
 
+---
 
-Set Up Virtual Environment:
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+## Setup
 
+1. **Clone the repository:**
 
-Install Dependencies:
-pip install -r requirements.txt
+   ```bash
+   git clone <repo-url>
+   cd document-generator
+   ```
 
+2. **Install dependencies:**
 
-Generate Templates:
-python create_templates.py
+   ```bash
+   pip install -r requirements.txt
+   ```
 
+3. **Run the application:**
 
-Run Locally:
-python app.py
+   ```bash
+   python api/app.py
+   ```
 
-Open http://127.0.0.1:5000 in your browser.
+5. **Access the app** via your browser at:
 
+   ```
+   http://127.0.0.1:5000
+   ```
 
-Deployment to Heroku
+---
 
-Install Heroku CLI: Follow Heroku CLI installation.
-Log In to Heroku:heroku login
+## Requirements
 
+* Python 3.x
+* Flask
+* Bootstrap 5.3.3 (via CDN)
 
-Create Heroku App:heroku create my-donor-app
+---
 
+## Usage
 
-Push to Heroku:git push heroku main
+1. Open your web browser.
+2. Navigate to the entry page (`home.html`).
+3. Select the desired form:
 
+   * Sperm Donor
+   * Oocyte Donor
+   * Commissioning Couple
+4. Fill in the required fields in the structured accordion form.
+5. Submit the form to generate and save ART documentation.
 
-Open App:heroku open
-
-
-
-Usage
-
-Fill the form with required fields (marked with *).
-Blood test results (HIV, HBV, HCV, VDRL) are selected from dropdowns.
-Number of children dynamically generates age fields (max 20).
-Submit to generate a ZIP file containing three .docx documents.
-Errors are displayed clearly; logs are saved in logs/app.log.
-
-Dependencies
-
-Flask: Web framework
-python-docx: Word document manipulation
-gunicorn: WSGI server for production
-flask-limiter: Rate limiting
-
-License
-MIT License
+---
