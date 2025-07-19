@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     const numChildrenInput = document.getElementById('num_children');
     const childrenAgesDiv = document.getElementById('children_ages');
-    const tobaccoRadios = document.getElementsByName('tobacco_use');
+    const smokingRadios = document.getElementsByName('smoking');
     const alcoholRadios = document.getElementsByName('alcohol');
-    const tobaccoDetails = document.getElementById('tobacco_details');
+    const drugRadios = document.getElementsByName('drug_use');
+    const smokingDetails = document.getElementById('smoking_details');
     const alcoholDetails = document.getElementById('alcohol_details');
-    const form = document.getElementById('oocyteDonorForm');
+    const form = document.getElementById('spermDonorForm');
     const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
     const errorList = document.getElementById('errorList');
     const progressBar = document.getElementById('progressBar');
@@ -32,15 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const existingValue = existingAges[`child_${i}_age`] || '';
             div.innerHTML = `
                 <label for="child_${i}_age" class="form-label">Child ${i} Age</label>
-                <input type="number" class="form-control" id="child_${i}_age" name="child_${i}_age" value="${existingValue}" min="2" max="100" title="Age must be between 2 and 100" data-bs-toggle="tooltip" data-bs-placement="right">
+                <input type="number" class="form-control" id="child_${i}_age" name="child_${i}_age" value="${existingValue}" min="0" max="100" title="Age must be between 0 and 100" data-bs-toggle="tooltip" data-bs-placement="right">
             `;
             childrenAgesDiv.appendChild(div);
         }
         initializeTooltips();
     }
 
-    function updateTobaccoDetails() {
-        tobaccoDetails.classList.toggle('d-none', !document.getElementById('tobacco_use_yes').checked);
+    function updateSmokingDetails() {
+        smokingDetails.classList.toggle('d-none', !document.getElementById('smoking_yes').checked);
     }
 
     function updateAlcoholDetails() {
@@ -82,16 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!form.aadhaar_number.value) errors.push('Aadhaar Number is required.');
         if (!form.date_of_discussion.value) errors.push('Date of Discussion is required.');
         if (!form.date_of_consultancy.value) errors.push('Date of Consultancy is required.');
-        if (!form.ivf_name.value) errors.push('IVF Name is required.');
-        if (!form.ivf_address.value) errors.push('IVF Address is required.');
-        if (!form.doctor_name.value) errors.push('Doctor Name is required.');
         if (form.aadhaar_number.value && !/^\d{12}$/.test(form.aadhaar_number.value)) errors.push('Aadhaar Number must be 12 digits.');
+        if (form.email_address.value && !/^[\w\.-]+@[\w\.-]+\.\w+$/.test(form.email_address.value)) errors.push('Invalid email address.');
         if (form.contact_number.value && !/^\d{10}$/.test(form.contact_number.value)) errors.push('Contact Number must be 10 digits.');
         if (form.pin_code.value && !/^\d{6}$/.test(form.pin_code.value)) errors.push('PIN Code must be 6 digits.');
-        if (form.age.value && (parseInt(form.age.value) < 18 || parseInt(form.age.value) > 100)) errors.push('Age must be between 18 and 100.');
         if (form.num_children.value && (parseInt(form.num_children.value) < 0 || parseInt(form.num_children.value) > 20)) errors.push('Number of children must be between 0 and 20.');
-        if (form.tobacco_use_yes.checked && !form.tobacco_frequency.value) errors.push('Tobacco Frequency is required if tobacco use is Yes.');
-        if (form.alcohol_yes.checked && !form.alcohol_frequency.value) errors.push('Alcohol Frequency is required if alcohol consumption is Yes.');
+        if (form.smoking_yes.checked && (!form.smoking_frequency.value || !form.cigarettes_per_day.value)) errors.push('Smoking Frequency and Cigarettes per Day are required if smoking is Yes.');
+        if (form.alcohol_yes.checked && (!form.alcohol_frequency.value || !form.alcohol_amount.value)) errors.push('Alcohol Frequency and Amount are required if alcohol consumption is Yes.');
         const today = new Date().toISOString().split('T')[0];
         ['date_of_birth', 'date_of_discussion', 'date_of_consultancy', 'last_medical_exam'].forEach(field => {
             if (form[field].value && form[field].value > today) {
@@ -105,8 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         for (let i = 1; i <= parseInt(form.num_children.value) || 0; i++) {
             const childAge = form[`child_${i}_age`];
-            if (childAge && childAge.value && (parseInt(childAge.value) < 2 || parseInt(childAge.value) > 100)) {
-                errors.push(`Child ${i} Age must be between 2 and 100.`);
+            if (childAge && childAge.value && (parseInt(childAge.value) < 0 || parseInt(childAge.value) > 100)) {
+                errors.push(`Child ${i} Age must be between 0 and 100.`);
             }
         }
 
@@ -121,20 +119,21 @@ document.addEventListener('DOMContentLoaded', () => {
         updateChildrenFields();
         updateProgress();
     });
-    tobaccoRadios.forEach(radio => radio.addEventListener('change', () => {
-        updateTobaccoDetails();
+    smokingRadios.forEach(radio => radio.addEventListener('change', () => {
+        updateSmokingDetails();
         updateProgress();
     }));
     alcoholRadios.forEach(radio => radio.addEventListener('change', () => {
         updateAlcoholDetails();
         updateProgress();
     }));
+    drugRadios.forEach(radio => radio.addEventListener('change', updateProgress));
     form.addEventListener('input', updateProgress);
     form.addEventListener('submit', validateForm);
 
     // Initialize
     updateChildrenFields();
-    updateTobaccoDetails();
+    updateSmokingDetails();
     updateAlcoholDetails();
     updateProgress();
     initializeTooltips();

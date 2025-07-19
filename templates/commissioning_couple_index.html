@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commissioning Couple Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Commissioning Couple Form</h1>
+        <div class="progress-container">
+            <div class="progress">
+                <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+        <form id="commissioningCoupleForm" action="/generate_commissioning_couple" method="POST">
+            <div class="accordion" id="commissioningCoupleAccordion">
+                <!-- Female Details -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#femaleDetails" aria-expanded="true" aria-controls="femaleDetails">
+                            Female Details
+                        </button>
+                    </h2>
+                    <div id="femaleDetails" class="accordion-collapse collapse show" data-bs-parent="#commissioningCoupleAccordion">
+                        <div class="accordion-body">
+                            <div class="mb-3">
+                                <label for="female_name" class="form-label">Female Name</label>
+                                <input type="text" class="form-control" id="female_name" name="female_name" value="{{ form_data.female_name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="female_age" class="form-label">Female Age</label>
+                                <input type="number" class="form-control" id="female_age" name="female_age" value="{{ form_data.female_age }}" min="18" max="100" title="Age must be between 18 and 100" data-bs-toggle="tooltip" data-bs-placement="right">
+                            </div>
+                            <div class="mb-3">
+                                <label for="female_dob" class="form-label">Female Date of Birth</label>
+                                <input type="date" class="form-control" id="female_dob" name="female_dob" value="{{ form_data.female_dob }}" max="{{ today }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="female_aadhaar" class="form-label">Female Aadhaar Number</label>
+                                <input type="text" class="form-control" id="female_aadhaar" name="female_aadhaar" value="{{ form_data.female_aadhaar }}" pattern="\d{12}" title="Aadhaar Number must be 12 digits" data-bs-toggle="tooltip" data-bs-placement="right" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="female_occupation" class="form-label">Female Occupation</label>
+                                <input type="text" class="form-control" id="female_occupation" name="female_occupation" value="{{ form_data.female_occupation }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Male Details -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#maleDetails" aria-expanded="false" aria-controls="maleDetails">
+                            Male Details
+                        </button>
+                    </h2>
+                    <div id="maleDetails" class="accordion-collapse collapse" data-bs-parent="#commissioningCoupleAccordion">
+                        <div class="accordion-body">
+                            <div class="mb-3">
+                                <label for="male_name" class="form-label">Male Name</label>
+                                <input type="text" class="form-control" id="male_name" name="male_name" value="{{ form_data.male_name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="male_age" class="form-label">Male Age</label>
+                                <input type="number" class="form-control" id="male_age" name="male_age" value="{{ form_data.male_age }}" min="18" max="100" title="Age must be between 18 and 100" data-bs-toggle="tooltip" data-bs-placement="right">
+                            </div>
+                            <div class="mb-3">
+                                <label for="male_dob" class="form-label">Male Date of Birth</label>
+                                <input type="date" class="form-control" id="male_dob" name="male_dob" value="{{ form_data.male_dob }}" max="{{ today }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Address Details -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addressDetails" aria-expanded="false" aria-controls="addressDetails">
+                            Address Details
+                        </button>
+                    </h2>
+                    <div id="addressDetails" class="accordion-collapse collapse" data-bs-parent="#commissioningCoupleAccordion">
+                        <div class="accordion-body">
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea class="form-control" id="address" name="address">{{ form_data.address }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="district" class="form-label">District</label>
+                                <input type="text" class="form-control" id="district" name="district" value="{{ form_data.district }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" name="state" value="{{ form_data.state }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="pin_code" class="form-label">PIN Code</label>
+                                <input type="text" class="form-control" id="pin_code" name="pin_code" value="{{ form_data.pin_code }}" pattern="\d{6}" title="PIN Code must be 6 digits" data-bs-toggle="tooltip" data-bs-placement="right">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Clinic Details -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#clinicDetails" aria-expanded="false" aria-controls="clinicDetails">
+                            Clinic Details
+                        </button>
+                    </h2>
+                    <div id="clinicDetails" class="accordion-collapse collapse" data-bs-parent="#commissioningCoupleAccordion">
+                        <div class="accordion-body">
+                            <div class="mb-3">
+                                <label for="ivf_name" class="form-label">IVF Clinic Name</label>
+                                <input type="text" class="form-control" id="ivf_name" name="ivf_name" value="{{ form_data.ivf_name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ivf_address" class="form-label">IVF Clinic Address</label>
+                                <textarea class="form-control" id="ivf_address" name="ivf_address">{{ form_data.ivf_address }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="doctor_name" class="form-label">Doctor Name</label>
+                                <input type="text" class="form-control" id="doctor_name" name="doctor_name" value="{{ form_data.doctor_name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="place" class="form-label">Place</label>
+                                <input type="text" class="form-control" id="place" name="place" value="{{ form_data.place }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-4">Generate Documents</button>
+        </form>
+        <!-- Error Modal -->
+        <div class="modal fade error-modal" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Form Errors</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="errorList">
+                            {% for error in errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/commissioning_couple_scripts.js"></script>
+</body>
+</html>
