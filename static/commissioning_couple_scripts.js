@@ -1,49 +1,63 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('commissioningCoupleForm');
-    const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-    const errorList = document.getElementById('errorList');
-    const progressBar = document.getElementById('progressBar');
+    const form = document.getElementById('coupleForm');
+    if (!form) return;
 
-    function updateProgress() {
-        const inputs = form.querySelectorAll('input, textarea, select');
-        let filled = 0;
-        inputs.forEach(input => {
-            if (input.value) filled++;
-        });
-        const total = inputs.length;
-        const percentage = Math.round((filled / total) * 100);
-        progressBar.style.width = `${percentage}%`;
-        progressBar.setAttribute('aria-valuenow', percentage);
+    const today = new Date().toISOString().split('T')[0];
+
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    // Set max date for date inputs
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        input.setAttribute('max', today);
+    });
+
+    // Update progress bar
+    function updateProgressBar() {
+        const totalFields = form.querySelectorAll('input, select, textarea').length;
+        const filledFields = Array.from(form.querySelectorAll('input, select, textarea')).filter(field => field.value.trim() !== '').length;
+        const progress = (filledFields / totalFields) * 100;
+        const progressBar = document.getElementById('progressBar');
+        progressBar.style.width = `${progress}%`;
+        progressBar.setAttribute('aria-valuenow', progress);
     }
 
-    function showErrors(errors) {
-        errorList.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
-        errorModal.show();
-    }
+    // Initialize progress
+    updateProgressBar();
 
-    function initializeTooltips() {
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.forEach(tooltipTriggerEl => {
-            new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    }
+    // Event listeners
+    form.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('input', updateProgressBar);
+    });
 
-    function validateForm(event) {
-        event.preventDefault();
+    // Form validation
+    form.addEventListener('submit', (event) => {
         const errors = [];
-        if (!form.female_name.value) errors.push('Female Name is required.');
-        if (!form.male_name.value) errors.push('Male Name is required.');
-        if (!form.female_aadhaar.value) errors.push('Female Aadhaar Number is required.');
-        if (!form.female_dob.value) errors.push('Female Date of Birth is required.');
-        if (!form.male_dob.value) errors.push('Male Date of Birth is required.');
-        if (!form.ivf_name.value) errors.push('IVF Name is required.');
-        if (!form.ivf_address.value) errors.push('IVF Address is required.');
-        if (!form.doctor_name.value) errors.push('Doctor Name is required.');
-        if (form.female_aadhaar.value && !/^\d{12}$/.test(form.female_aadhaar.value)) errors.push('Female Aadhaar Number must be 12 digits.');
-        if (form.pin_code.value && !/^\d{6}$/.test(form.pin_code.value)) errors.push('PIN Code must be 6 digits.');
-        if (form.female_age.value && (parseInt(form.female_age.value) < 18 || parseInt(form.female_age.value) > 100)) errors.push('Female Age must be between 18 and 100.');
-        if (form.male_age.value && (parseInt(form.male_age.value) < 18 || parseInt(form.male_age.value) > 100)) errors.push('Male Age must be between 18 and 100.');
-        const today = new Date().toISOString().split('T')[0];
+        const errorList = document.getElementById('errorList');
+        const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+
+        // Required fields
+        ['female_name', 'female_dob', 'female_aadhaar', 'male_name', 'male_dob', 'ivf_name', 'doctor_name'].forEach(field => {
+            if (!form[field].value) errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} is required.`);
+        });
+
+        // Pattern validations
+        if (form.female_aadhaar.value && !/^\d{12}$/.test(form.female_aadhaar.value)) {
+            errors.push('Female Aadhaar Number must be 12 digits.');
+        }
+        if (form.pin_code.value && !/^\d{6}$/.test(form.pin_code.value)) {
+            errors.push('PIN Code must be 6 digits.');
+        }
+
+        // Number range validations
+        ['female_age', 'male_age'].forEach(field => {
+            if (form[field].value && (parseInt(form[field].value) < 18 || parseInt(form[field].value) > 100)) {
+                errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} must be between 18 and 100.`);
+            }
+        });
+
+        // Date validations
         ['female_dob', 'male_dob'].forEach(field => {
             if (form[field].value && form[field].value > today) {
                 errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} cannot be in the future.`);
@@ -51,21 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (errors.length > 0) {
-            showErrors(errors);
-        } else {
-            form.submit();
+            event.preventDefault();
+            errorList.innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+            errorModal.show();
         }
-    }
-
-    form.addEventListener('input', updateProgress);
-    form.addEventListener('submit', validateForm);
-
-    // Initialize
-    updateProgress();
-    initializeTooltips();
-
-    // Show modal if errors exist from server-side
-    if (window.location.hash === '#errorModal') {
-        errorModal.show();
-    }
+    });
 });
