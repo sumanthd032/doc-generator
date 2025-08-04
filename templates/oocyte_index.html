@@ -54,7 +54,7 @@
                                 <label for="age" class="form-label">Age</label>
                                 <input type="number" class="form-control" id="age" name="age" value="{{ form_data.age | default('') }}" min="18" max="100" title="Age must be between 18 and 100" data-bs-toggle="tooltip" data-bs-placement="right">
                             </div>
-                            <div class="mb-3">
+                             <div class="mb-3">
                                 <label for="email_address" class="form-label">Email Address</label>
                                 <input type="email" class="form-control" id="email_address" name="email_address" value="{{ form_data.email_address | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter a valid email address">
                             </div>
@@ -114,19 +114,6 @@
                             <div class="mb-3">
                                 <label for="date_of_consultancy" class="form-label">Date of Consultancy <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" id="date_of_consultancy" name="date_of_consultancy" value="{{ form_data.date_of_consultancy | default('') }}" required max="{{ today }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Select date of consultancy">
-                            </div>
-                            <div class="mb-3">
-                                <label for="donor_experience" class="form-label">Previous Donor Experience</label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check">
-                                        <input type="radio" id="donor_experience_yes" name="donor_experience" value="Yes" {% if form_data.donor_experience == 'Yes' %}checked{% endif %} class="form-check-input">
-                                        <label for="donor_experience_yes" class="form-check-label">Yes</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="radio" id="donor_experience_no" name="donor_experience" value="No" {% if form_data.donor_experience == 'No' or not form_data.donor_experience %}checked{% endif %} class="form-check-input">
-                                        <label for="donor_experience_no" class="form-check-label">No</label>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -195,10 +182,6 @@
                             <div class="mb-3">
                                 <label for="amh_levels" class="form-label">AMH Levels</label>
                                 <input type="number" class="form-control" id="amh_levels" name="amh_levels" value="{{ form_data.amh_levels | default('') }}" min="0" step="0.1" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter AMH levels in ng/mL">
-                            </div>
-                            <div class="mb-3">
-                                <label for="genetic_disorders" class="form-label">Genetic Disorders</label>
-                                <textarea class="form-control" id="genetic_disorders" name="genetic_disorders" data-bs-toggle="tooltip" data-bs-placement="right" title="List any known genetic disorders">{{ form_data.genetic_disorders | default('') }}</textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="family_history" class="form-label">Family Medical History</label>
@@ -279,72 +262,8 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Dietary Preferences</label>
-                                <div class="d-flex flex-wrap gap-3">
-                                    <div class="form-check">
-                                        <input type="radio" id="diet_veg" name="diet" value="Vegetarian" {% if form_data.diet == 'Vegetarian' %}checked{% endif %} class="form-check-input">
-                                        <label for="diet_veg" class="form-check-label">Vegetarian</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="radio" id="diet_nonveg" name="diet" value="Non-Vegetarian" {% if form_data.diet == 'Non-Vegetarian' %}checked{% endif %} class="form-check-input">
-                                        <label for="diet_nonveg" class="form-check-label">Non-Vegetarian</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="radio" id="diet_vegan" name="diet" value="Vegan" {% if form_data.diet == 'Vegan' %}checked{% endif %} class="form-check-input">
-                                        <label for="diet_vegan" class="form-check-label">Vegan</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="radio" id="diet_other" name="diet" value="Other" {% if form_data.diet == 'Other' or not form_data.diet %}checked{% endif %} class="form-check-input">
-                                        <label for="diet_other" class="form-check-label">Other</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="physicalAttributes">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePhysical" aria-expanded="false" aria-controls="collapsePhysical">
-                            Physical Attributes
-                        </button>
-                    </h2>
-                    <div id="collapsePhysical" class="accordion-collapse collapse" aria-labelledby="physicalAttributes">
-                        <div class="accordion-body">
-                            <div class="mb-3">
-                                <label for="height" class="form-label">Height</label>
-                                <input type="text" class="form-control" id="height" name="height" value="{{ form_data.height | default('') }}" pattern="\d+(\.\d+)? (cm|ft)" title="Height must be in format 'number cm' or 'number ft'" data-bs-toggle="tooltip" data-bs-placement="right">
-                            </div>
-                            <div class="mb-3">
-                                <label for="weight" class="form-label">Weight</label>
-                                <input type="text" class="form-control" id="weight" name="weight" value="{{ form_data.weight | default('') }}" pattern="\d+(\.\d+)? (kg|lbs)" title="Weight must be in format 'number kg' or 'number lbs'" data-bs-toggle="tooltip" data-bs-placement="right">
-                            </div>
-                            <div class="mb-3">
-                                <label for="education" class="form-label">Educational Qualifications</label>
-                                <input type="text" class="form-control" id="education" name="education" value="{{ form_data.education | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your educational qualifications">
-                            </div>
-                            <div class="mb-3">
-                                <label for="mother_tongue" class="form-label">Mother Tongue</label>
-                                <input type="text" class="form-control" id="mother_tongue" name="mother_tongue" value="{{ form_data.mother_tongue | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your mother tongue">
-                            </div>
-                            <div class="mb-3">
-                                <label for="skin_colour" class="form-label">Skin Colour</label>
-                                <input type="text" class="form-control" id="skin_colour" name="skin_colour" value="{{ form_data.skin_colour | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe your skin colour">
-                            </div>
-                            <div class="mb-3">
-                                <label for="hair_colour" class="form-label">Hair Colour</label>
-                                <input type="text" class="form-control" id="hair_colour" name="hair_colour" value="{{ form_data.hair_colour | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe your hair colour">
-                            </div>
-                            <div class="mb-3">
-                                <label for="eye_colour" class="form-label">Eye Colour</label>
-                                <input type="text" class="form-control" id="eye_colour" name="eye_colour" value="{{ form_data.eye_colour | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe your eye colour">
-                            </div>
-                            <div class="mb-3">
-                                <label for="religion" class="form-label">Religion</label>
-                                <input type="text" class="form-control" id="religion" name="religion" value="{{ form_data.religion | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your religion">
-                            </div>
-                            <div class="mb-3">
-                                <label for="occupation" class="form-label">Occupation</label>
-                                <input type="text" class="form-control" id="occupation" name="occupation" value="{{ form_data.occupation | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your occupation">
+                                <label for="exercise_routine" class="form-label">Exercise Routine</label>
+                                <input type="text" class="form-control" id="exercise_routine" name="exercise_routine" value="{{ form_data.exercise_routine | default('') }}" data-bs-toggle="tooltip" data-bs-placement="right" title="Describe your exercise routine">
                             </div>
                         </div>
                     </div>
@@ -357,18 +276,6 @@
                     </h2>
                     <div id="collapseConsent" class="accordion-collapse collapse" aria-labelledby="consentDetails">
                         <div class="accordion-body">
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input type="checkbox" id="consent_cryopreservation" name="consent_cryopreservation" {% if form_data.consent_cryopreservation == 'Yes' %}checked{% endif %} class="form-check-input">
-                                    <label for="consent_cryopreservation" class="form-check-label">Consent for Cryopreservation of Oocytes</label>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input type="checkbox" id="consent_art_bank" name="consent_art_bank" {% if form_data.consent_art_bank == 'Yes' %}checked{% endif %} class="form-check-input">
-                                    <label for="consent_art_bank" class="form-check-label">Consent for Use of Oocytes by ART Bank</label>
-                                </div>
-                            </div>
                             <div class="mb-3">
                                 <div class="form-check">
                                     <input type="checkbox" id="consent_registry" name="consent_registry" {% if form_data.consent_registry == 'Yes' %}checked{% endif %} class="form-check-input">

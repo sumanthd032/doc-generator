@@ -62,7 +62,7 @@ def sperm_index():
 def oocyte_index():
     form_data = {
         'full_name': '', 'address': '', 'district': '', 'state': '', 'pin_code': '', 'contact_number': '',
-        'aadhaar_number': '', 'date_of_birth': '', 'age': '', 'date_of_discussion': '', 'date_of_consultancy': '',
+        'aadhaar_number': '', 'date_of_birth': '', 'age': '', 'email_address': '', 'date_of_discussion': '', 'date_of_consultancy': '',
         'marital_status': 'Not Specified', 'num_children': '0', 'donor_id': '', 'last_medical_exam': '',
         'hiv_results': '', 'hbv_results': '', 'hcv_results': '', 'vdrl_results': '', 'family_history': '',
         'serious_illness': '', 'current_medications': '', 'allergies': '', 'antral_follicle_count': '',
@@ -177,6 +177,7 @@ def generate_sperm_document():
             errors.append("Number of children cannot exceed 20.")
     except ValueError:
         errors.append("Number of children must be a valid number.")
+        num_children = 0
 
     # Validate children ages
     children_ages = []
@@ -244,7 +245,7 @@ def generate_sperm_document():
                         for key in template['fields']:
                             placeholder = f'{{{key}}}'
                             if placeholder in paragraph.text:
-                                paragraph.text = paragraph.text.replace(placeholder, form_data[key] or 'N/A')
+                                paragraph.text = paragraph.text.replace(placeholder, str(form_data.get(key, 'N/A')))
                     output_filename = template['output'].format(full_name=form_data['full_name'].replace(' ', '_') or 'Unknown', timestamp=timestamp)
                     output_path = os.path.join(OUTPUT_DIR, output_filename)
                     doc.save(output_path)
@@ -278,6 +279,7 @@ def generate_oocyte_document():
         'aadhaar_number': request.form.get('aadhaar_number', '').strip(),
         'date_of_birth': request.form.get('date_of_birth', '').strip(),
         'age': request.form.get('age', '').strip(),
+        'email_address': request.form.get('email_address', '').strip(),
         'date_of_discussion': request.form.get('date_of_discussion', '').strip(),
         'date_of_consultancy': request.form.get('date_of_consultancy', '').strip(),
         'marital_status': request.form.get('marital_status', 'Not Specified'),
@@ -330,9 +332,10 @@ def generate_oocyte_document():
 
     # Validate age
     try:
-        age = int(form_data['age']) if form_data['age'] else 0
-        if age < 18 or age > 100:
-            errors.append("Age must be between 18 and 100.")
+        if form_data['age']:
+            age = int(form_data['age'])
+            if age < 18 or age > 100:
+                errors.append("Age must be between 18 and 100.")
     except ValueError:
         errors.append("Age must be a valid number.")
 
@@ -356,6 +359,7 @@ def generate_oocyte_document():
             errors.append("Number of children cannot exceed 20.")
     except ValueError:
         errors.append("Number of children must be a valid number.")
+        num_children = 0
 
     # Validate children ages
     children_ages = []
@@ -364,8 +368,8 @@ def generate_oocyte_document():
         try:
             if age:
                 age_val = int(age)
-                if age_val < 2 or age_val > 100:
-                    errors.append(f"Child {i} Age must be between 2 and 100.")
+                if age_val < 0 or age_val > 100:
+                    errors.append(f"Child {i} Age must be between 0 and 100.")
                 children_ages.append(f"Child {i}: Age: {age}")
             else:
                 children_ages.append(f"Child {i}: Age: N/A")
@@ -423,7 +427,7 @@ def generate_oocyte_document():
                         for key in template['fields']:
                             placeholder = f'{{{key}}}'
                             if placeholder in paragraph.text:
-                                paragraph.text = paragraph.text.replace(placeholder, form_data[key] or 'N/A')
+                                paragraph.text = paragraph.text.replace(placeholder, str(form_data.get(key, 'N/A')))
                     output_filename = template['output'].format(full_name=form_data['full_name'].replace(' ', '_') or 'Unknown', timestamp=timestamp)
                     output_path = os.path.join(OUTPUT_DIR, output_filename)
                     doc.save(output_path)
@@ -485,9 +489,10 @@ def generate_commissioning_couple_document():
     # Validate ages
     for field in ['female_age', 'male_age']:
         try:
-            age = int(form_data[field]) if form_data[field] else 0
-            if age < 18 or age > 100:
-                errors.append(f"{field.replace('_', ' ').title()} must be between 18 and 100.")
+            if form_data[field]:
+                age = int(form_data[field])
+                if age < 18 or age > 100:
+                    errors.append(f"{field.replace('_', ' ').title()} must be between 18 and 100.")
         except ValueError:
             errors.append(f"{field.replace('_', ' ').title()} must be a valid number.")
 
@@ -530,7 +535,7 @@ def generate_commissioning_couple_document():
                         for key in template['fields']:
                             placeholder = f'{{{key}}}'
                             if placeholder in paragraph.text:
-                                paragraph.text = paragraph.text.replace(placeholder, form_data[key] or 'N/A')
+                                paragraph.text = paragraph.text.replace(placeholder, str(form_data.get(key, 'N/A')))
                     output_filename = template['output'].format(female_name=form_data['female_name'].replace(' ', '_') or 'Unknown', timestamp=timestamp)
                     output_path = os.path.join(OUTPUT_DIR, output_filename)
                     doc.save(output_path)
@@ -554,27 +559,37 @@ def generate_commissioning_couple_document():
 @limiter.limit("5 per minute")
 def download_zip(filename):
     zip_path = os.path.join(DOWNLOAD_DIR, filename)
+    if not os.path.exists(zip_path):
+        logging.error(f"ZIP file {filename} not found for download attempt.")
+        return render_template('error.html', errors=["ZIP file not found. It may have already been downloaded or has been cleaned up."], show_modal=True)
+    
     try:
-        response = send_file(zip_path, as_attachment=True)
-        logging.info(f"Downloaded {filename} by {request.remote_addr}")
-        # Clean up output files
+        # Clean up old files before sending the response
+        # Clean up output files first
         for file in os.listdir(OUTPUT_DIR):
             try:
                 os.remove(os.path.join(OUTPUT_DIR, file))
             except Exception as e:
                 logging.warning(f"Failed to delete output file {file}: {str(e)}")
-        # Clean up ZIP file
-        try:
-            os.remove(zip_path)
-        except Exception as e:
-            logging.warning(f"Failed to delete ZIP file {zip_path}: {str(e)}")
+        
+        # Then send the requested zip file
+        response = send_file(zip_path, as_attachment=True)
+        logging.info(f"Downloaded {filename} by {request.remote_addr}")
+
+        # Schedule cleanup of the sent zip file after the request is complete
+        @response.call_on_close
+        def cleanup_zip():
+            try:
+                os.remove(zip_path)
+                logging.info(f"Cleaned up ZIP file {zip_path}")
+            except Exception as e:
+                logging.warning(f"Failed to delete ZIP file {zip_path}: {str(e)}")
+        
         return response
-    except FileNotFoundError:
-        logging.error(f"ZIP file {filename} not found")
-        return render_template('error.html', errors=["ZIP file not found. It may have already been downloaded or deleted."], show_modal=True)
     except Exception as e:
-        logging.error(f"Error downloading {filename}: {str(e)}")
+        logging.error(f"Error during download of {filename}: {str(e)}")
         return render_template('error.html', errors=[f"Error downloading file: {str(e)}"], show_modal=True)
+
 
 @app.errorhandler(429)
 def ratelimit_handler(e):

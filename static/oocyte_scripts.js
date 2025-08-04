@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ['full_name', 'aadhaar_number', 'date_of_discussion', 'date_of_consultancy', 'ivf_name', 'doctor_name'].forEach(field => {
             const element = form[field];
             if (!element || !element.value.trim()) {
-                errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} is required.`);
+                errors.push(`${field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} is required.`);
             }
         });
 
@@ -131,12 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (form.email_address?.value && !/^[\w\.-]+@[\w\.-]+\.\w+$/.test(form.email_address.value)) {
             errors.push('Invalid email address.');
         }
-        if (form.height?.value && !/^\d+(\.\d+)? (cm|ft)$/.test(form.height.value)) {
-            errors.push('Height must be in format "number cm" or "number ft".');
-        }
-        if (form.weight?.value && !/^\d+(\.\d+)? (kg|lbs)$/.test(form.weight.value)) {
-            errors.push('Weight must be in format "number kg" or "number lbs".');
-        }
 
         // Number range validations
         if (form.age?.value && (parseInt(form.age.value) < 18 || parseInt(form.age.value) > 100)) {
@@ -145,29 +139,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (form.num_children?.value && (parseInt(form.num_children.value) < 0 || parseInt(form.num_children.value) > 20)) {
             errors.push('Number of children must be between 0 and 20.');
         }
-        if (form.tobacco_use_yes?.checked && !form.tobacco_frequency?.value.trim()) {
+        if (document.getElementById('tobacco_use_yes')?.checked && !form.tobacco_frequency?.value.trim()) {
             errors.push('Tobacco Frequency is required if tobacco use is Yes.');
         }
-        if (form.alcohol_yes?.checked && !form.alcohol_frequency?.value.trim()) {
+        if (document.getElementById('alcohol_yes')?.checked && !form.alcohol_frequency?.value.trim()) {
             errors.push('Alcohol Frequency is required if alcohol consumption is Yes.');
         }
         ['antral_follicle_count', 'fsh_levels', 'amh_levels'].forEach(field => {
             if (form[field]?.value && (isNaN(form[field].value) || parseFloat(form[field].value) < 0)) {
-                errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} must be a non-negative number.`);
+                errors.push(`${field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} must be a non-negative number.`);
             }
         });
 
         // Date validations
         ['date_of_birth', 'last_medical_exam', 'date_of_discussion', 'date_of_consultancy'].forEach(field => {
             if (form[field]?.value && form[field].value > today) {
-                errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} cannot be in the future.`);
+                errors.push(`${field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} cannot be in the future.`);
             }
         });
 
         // Blood test result validations
         ['hiv_results', 'hbv_results', 'hcv_results', 'vdrl_results'].forEach(field => {
             if (form[field]?.value && !['Negative', 'Positive', 'Pending', ''].includes(form[field].value)) {
-                errors.push(`${field.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())} must be 'Negative', 'Positive', or 'Pending'.`);
+                errors.push(`${field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} must be 'Negative', 'Positive', or 'Pending'.`);
             }
         });
 
