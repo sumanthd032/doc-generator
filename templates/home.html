@@ -14,29 +14,19 @@
         .bg-custom-gradient {
             background-image: linear-gradient(to right, #4facfe, #00f2fe);
         }
-        /* Custom styles for the toggle switch's sliding circle */
-        .toggle-checkbox:checked {
-            right: 0;
-            border-color: #68D391; /* Green border when checked */
-        }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #4A5568; /* Darker background for the track when on */
-        }
     </style>
 </head>
-<!-- ENHANCEMENT: Added dark mode classes for background and transition -->
+<!-- ENHANCEMENT: Dark mode classes are kept for theme switching -->
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-300 dark:bg-slate-900 dark:from-gray-900 dark:to-slate-800">
 
-    <!-- ENHANCEMENT: Added dark mode classes for card background, border, and transition -->
+    <!-- ENHANCEMENT: Card styles for both light and dark mode are preserved -->
     <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-10 max-w-md w-full border border-gray-200/50 transition-colors duration-300 dark:bg-slate-800 dark:border-gray-700 relative">
         
-        <!-- NEW: Dark Mode Toggle -->
+        <!-- NEW: Dark Mode Toggle is back for better UX -->
         <div class="absolute top-4 right-4">
             <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
-                <!-- Sun Icon (for switching to light mode) -->
-                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 001.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.464 16.364l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414z"></path></svg>
-                <!-- Moon Icon (for switching to dark mode) -->
                 <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 001.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.464 16.364l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414z"></path></svg>
             </button>
         </div>
         
@@ -48,12 +38,10 @@
             </div>
         </div>
 
-        <!-- ENHANCEMENT: Added dark mode class for heading text -->
         <h1 class="text-3xl font-bold text-center text-slate-800 mb-2 transition-colors duration-300 dark:text-white">
             ART Document Generator
         </h1>
 
-        <!-- ENHANCEMENT: Added dark mode class for paragraph text -->
         <p class="text-center text-slate-500 mb-8 transition-colors duration-300 dark:text-slate-400">Select the appropriate form to begin the process.</p>
         
         <div class="space-y-4">
@@ -86,12 +74,11 @@
         </div>
     </div>
     
-    <!-- ENHANCEMENT: Added dark mode class for footer text -->
     <footer class="text-center mt-6 text-sm text-gray-500/80 transition-colors duration-300 dark:text-gray-400">
         <p>&copy; 2025 ART Services Inc. All Rights Reserved.</p>
     </footer>
 
-    <!-- NEW: JavaScript for Dark Mode Toggle -->
+    <!-- MODIFIED: JavaScript for Manual Dark Mode Toggle -->
     <script>
         const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
         const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
